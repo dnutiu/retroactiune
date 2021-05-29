@@ -32,7 +32,7 @@ namespace Retroactiune
 
             
             // Services
-            services.AddSingleton<FeedbackReceiverService>();
+            services.AddSingleton<IFeedbackReceiverService, FeedbackReceiverService>();
             
             // WebAPI
             services.AddControllers();

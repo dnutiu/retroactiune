@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
+using Retroactiune.Models;
 
-namespace Retroactiune.Models
+namespace Retroactiune
 {
     public class MappingProfile : Profile
     {

@@ -12,7 +12,7 @@ namespace Retroactiune.Services
     /// Service that simplifies access to the database for managing FeedbackReceiver items.
     /// <see cref="FeedbackReceiver"/>
     /// </summary>
-    public class FeedbackReceiverService
+    public class FeedbackReceiverService : IFeedbackReceiverService
     {
         private readonly IMongoCollection<FeedbackReceiver> _collection;
         private readonly ILogger<FeedbackReceiverService> _logger;
@@ -25,7 +25,7 @@ namespace Retroactiune.Services
             _logger = logger;
         }
 
-        public async Task CreateMany(IEnumerable<FeedbackReceiver> items)
+        public async Task CreateManyAsync(IEnumerable<FeedbackReceiver> items)
         {
             try
             {

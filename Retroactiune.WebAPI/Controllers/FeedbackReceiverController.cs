@@ -1,9 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
 using Retroactiune.Models;
 using Retroactiune.Services;
 
@@ -13,13 +16,52 @@ namespace Retroactiune.Controllers
     [Route("api/v1/[controller]")]
     public class FeedbackReceiverController : ControllerBase
     {
-        private readonly FeedbackReceiverService _service;
+        private readonly IOptions<ApiBehaviorOptions> _apiBehaviorOptions;
+        private readonly IFeedbackReceiverService _service;
         private readonly IMapper _mapper;
 
-        public FeedbackReceiverController(FeedbackReceiverService service, IMapper mapper)
+        public FeedbackReceiverController(IFeedbackReceiverService service, IMapper mapper,
+            IOptions<ApiBehaviorOptions> apiBehaviorOptions)
         {
             _service = service;
             _mapper = mapper;
+            _apiBehaviorOptions = apiBehaviorOptions;
+        }
+
+
+        /// <summary>
+        /// Inserts FeedbackReceivers into the database.
+        /// </summary>
+        /// <param name="items">The list of FeedbackReceivers</param>
+        /// <returns>A BasicResponse indicating success.</returns>
+        /// <response code="201">Returns the newly created item</response>
+        /// <response code="400">If the items is invalid</response>  
+        [HttpPost]
+        [ProducesResponseType(typeof(BasicResponse), StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> Post([Required] IEnumerable<FeedbackReceiverDto> items)
+        {
+            var feedbackReceiversDto = items.ToList();
+            if (!feedbackReceiversDto.Any())
+            {
+                ModelState.AddModelError(nameof(IEnumerable<FeedbackReceiverDto>),
+                    "At least one FeedbackReceiver item is required.");
+                return _apiBehaviorOptions?.Value.InvalidModelStateResponseFactory(ControllerContext);
+            }
+
+            var mappedItems = feedbackReceiversDto.Select(i =>
+            {
+                var result = _mapper.Map<FeedbackReceiver>(i);
+                result.CreatedAt = DateTime.UtcNow;
+                return result;
+            });
+
+            await _service.CreateManyAsync(mappedItems);
+
+            return Ok(new BasicResponse()
+            {
+                Message = "Items created successfully!"
+            });
         }
 
         [HttpDelete("{id}")]
@@ -27,25 +69,6 @@ namespace Retroactiune.Controllers
         {
             // delete feedback item.
             return NoContent();
-        }
-
-
-        [HttpPost]
-        public async Task<BasicResponse> Post(IEnumerable<FeedbackReceiverDto> items)
-        {
-            var mappedItems = items.ToList().Select(i =>
-            {
-                var result = _mapper.Map<FeedbackReceiver>(i);
-                result.CreatedAt = DateTime.UtcNow;
-                return result;
-            });
-
-            await _service.CreateMany(mappedItems);
-
-            return new BasicResponse()
-            {
-                Message = "Items created successfully!"
-            };
         }
 
         [HttpGet("{id}")]
