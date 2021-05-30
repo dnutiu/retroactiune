@@ -4,6 +4,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Retroactiune.WebAPI", "Retr
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Retroactiune.UnitTests", "Retroactiune.UnitTests\Retroactiune.UnitTests.csproj", "{2A2B5780-B8EF-4260-9EC1-3A2BFE5CDA7F}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Retroactiune.IntegrationTests", "Retroactiune.IntegrationTests\Retroactiune.IntegrationTests.csproj", "{0A585C42-6DA1-4CB8-95AC-C0E4BE49C14C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -18,5 +20,9 @@ Global
 		{2A2B5780-B8EF-4260-9EC1-3A2BFE5CDA7F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2A2B5780-B8EF-4260-9EC1-3A2BFE5CDA7F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2A2B5780-B8EF-4260-9EC1-3A2BFE5CDA7F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0A585C42-6DA1-4CB8-95AC-C0E4BE49C14C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0A585C42-6DA1-4CB8-95AC-C0E4BE49C14C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0A585C42-6DA1-4CB8-95AC-C0E4BE49C14C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0A585C42-6DA1-4CB8-95AC-C0E4BE49C14C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

@@ -13,7 +13,7 @@ namespace Retroactiune.Tests.Retroactiune.WebAPI.Controllers
     public class TestFeedbackReceiverController
     {
         [Fact]
-        public async Task Post_Successful_Creation_No_items()
+        public async Task Post_Fail_Creation_No_items()
         {
             var mapper = TestUtils.GetMapper();
             var mockService = new Mock<IFeedbackReceiverService>();
@@ -24,8 +24,9 @@ namespace Retroactiune.Tests.Retroactiune.WebAPI.Controllers
 
             // Assert, null because we don't have the ApiBehaviourOptions set, which would generate the IActionResult for the invalid input.
             Assert.Null(result);
+            mockService.Verify(s => s.CreateManyAsync(It.IsAny<IEnumerable<FeedbackReceiver>>()), Times.Never);
         }
-        
+
         [Theory, AutoData]
         public async Task Post_Successful_Creation_Two_items(IEnumerable<FeedbackReceiverDto> items)
         {
@@ -38,6 +39,7 @@ namespace Retroactiune.Tests.Retroactiune.WebAPI.Controllers
 
             // Assert
             Assert.IsType<OkObjectResult>(result);
+            mockService.Verify(s => s.CreateManyAsync(It.IsAny<IEnumerable<FeedbackReceiver>>()), Times.Once);
         }
     }
 }
