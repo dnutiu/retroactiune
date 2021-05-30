@@ -1,30 +1,32 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Text;
 using System.Text.Json;
-using System.Threading;
 using System.Threading.Tasks;
 using AutoFixture;
 using AutoFixture.Xunit2;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 using MongoDB.Driver;
 using Retroactiune.IntegrationTests.Retroactiune.WebAPI.Fixtures;
 using Retroactiune.Models;
+using Retroactiune.Settings;
 using Xunit;
 
 namespace Retroactiune.IntegrationTests.Retroactiune.WebAPI.Controllers
 {
-    public class TestFeedbackReceiver : IClassFixture<WebApiTestingFactory>, IClassFixture<MongoDbFixture>
+    public class TestFeedbackReceiver : IClassFixture<WebApiTestingFactory>
     {
         private readonly MongoDbFixture _mongoDb;
         private readonly HttpClient _client;
 
-        public TestFeedbackReceiver(WebApiTestingFactory factory, MongoDbFixture mongoDbFixture)
+        public TestFeedbackReceiver(WebApiTestingFactory factory)
         {
             _client = factory.CreateClient();
-            _mongoDb = mongoDbFixture;
+            var dbSettings = factory.Services.GetService<IOptions<RetroactiuneDbSettings>>();
+            _mongoDb = new MongoDbFixture(dbSettings);
         }
 
 
