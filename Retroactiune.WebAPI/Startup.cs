@@ -6,6 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using MongoDB.Driver;
 using Retroactiune.Services;
 using Retroactiune.Settings;
 
@@ -28,11 +29,17 @@ namespace Retroactiune
             services.AddSingleton<IMongoDbSettings>(sp =>
                 sp.GetRequiredService<IOptions<RetroactiuneDbSettings>>().Value);
 
+            // AutoMapper
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
             
             // Services
             services.AddSingleton<IFeedbackReceiverService, FeedbackReceiverService>();
+            services.AddSingleton<IMongoClient, MongoClient>(i =>
+            {
+                var settings = i.GetService<IOptions<RetroactiuneDbSettings>>();
+                return new MongoClient(settings.Value.ConnectionString);
+            });
             
             // WebAPI
             services.AddControllers();

@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
+using MongoDB.Driver;
 using Retroactiune.Services;
 using Retroactiune.Settings;
 
@@ -33,7 +34,12 @@ namespace Retroactiune
 
             // Services
             services.AddSingleton<IFeedbackReceiverService, FeedbackReceiverService>();
-
+            services.AddSingleton<IMongoClient, MongoClient>(i =>
+            {
+                var settings = i.GetService<IOptions<RetroactiuneDbSettings>>();
+                return new MongoClient(settings.Value.ConnectionString);
+            });
+            
             // WebAPI
             services.AddControllers();
         }
