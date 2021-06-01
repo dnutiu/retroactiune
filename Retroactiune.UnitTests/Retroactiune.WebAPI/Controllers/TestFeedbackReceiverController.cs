@@ -19,7 +19,7 @@ namespace Retroactiune.Tests.Retroactiune.WebAPI.Controllers
             var mockService = new Mock<IFeedbackReceiverService>();
 
             // Test
-            var controller = new FeedbackReceiverController(mockService.Object, mapper, null);
+            var controller = new FeedbackReceiversController(mockService.Object, mapper, null);
             var result = await controller.Post(new List<FeedbackReceiverDto>());
 
             // Assert, null because we don't have the ApiBehaviourOptions set, which would generate the IActionResult for the invalid input.
@@ -34,7 +34,7 @@ namespace Retroactiune.Tests.Retroactiune.WebAPI.Controllers
             var mockService = new Mock<IFeedbackReceiverService>();
 
             // Test
-            var controller = new FeedbackReceiverController(mockService.Object, mapper, null);
+            var controller = new FeedbackReceiversController(mockService.Object, mapper, null);
             var result = await controller.Post(items);
 
             // Assert

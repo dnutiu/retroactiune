@@ -33,7 +33,7 @@ namespace Retroactiune.IntegrationTests.Retroactiune.WebAPI.Controllers
         [Fact]
         public async Task Test_CreateFeedbackReceiver_NoContent()
         {
-            var httpResponse = await _client.PostAsync("/api/v1/FeedbackReceiver/",
+            var httpResponse = await _client.PostAsync("/api/v1/FeedbackReceivers/",
                 new StringContent("[]", Encoding.UTF8, "application/json"));
             Assert.Equal(HttpStatusCode.BadRequest, httpResponse.StatusCode);
         }
@@ -49,7 +49,7 @@ namespace Retroactiune.IntegrationTests.Retroactiune.WebAPI.Controllers
             var jsonContent = JsonSerializer.Serialize(new List<FeedbackReceiverDto> {item});
 
             // Test
-            var httpResponse = await _client.PostAsync("/api/v1/FeedbackReceiver/",
+            var httpResponse = await _client.PostAsync("/api/v1/FeedbackReceivers/",
                 new StringContent(jsonContent, Encoding.UTF8, "application/json"));
 
             // Assert
@@ -67,7 +67,7 @@ namespace Retroactiune.IntegrationTests.Retroactiune.WebAPI.Controllers
             var jsonContent = JsonSerializer.Serialize(new List<FeedbackReceiverDto> {item});
 
             // Test
-            var httpResponse = await _client.PostAsync("/api/v1/FeedbackReceiver/",
+            var httpResponse = await _client.PostAsync("/api/v1/FeedbackReceivers/",
                 new StringContent(jsonContent, Encoding.UTF8, "application/json"));
 
             // Assert
@@ -83,7 +83,7 @@ namespace Retroactiune.IntegrationTests.Retroactiune.WebAPI.Controllers
             var jsonContent = JsonSerializer.Serialize(feedbackReceiversDto);
 
             // Test
-            var httpResponse = await _client.PostAsync("/api/v1/FeedbackReceiver/",
+            var httpResponse = await _client.PostAsync("/api/v1/FeedbackReceivers/",
                 new StringContent(jsonContent, Encoding.UTF8, "application/json"));
 
             // Assert

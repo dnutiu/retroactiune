@@ -33,7 +33,7 @@ namespace Retroactiune.Services
             {
                 throw new GenericServiceException("items must contain at least one element");
             }
-            
+
             try
             {
                 await _collection.InsertManyAsync(items);
@@ -42,7 +42,19 @@ namespace Retroactiune.Services
             {
                 throw new GenericServiceException($"Operation failed: {e.Message}");
             }
-            
+        }
+
+        public async Task DeleteOneAsync(string guid)
+        {
+            try
+            {
+                var filter = new FilterDefinitionBuilder<FeedbackReceiver>();
+                await _collection.DeleteOneAsync(filter.Eq(i => i.Id, guid));
+            }
+            catch (Exception e)
+            {
+                throw new GenericServiceException($"Operation failed: {e.Message}");
+            }
         }
     }
 }

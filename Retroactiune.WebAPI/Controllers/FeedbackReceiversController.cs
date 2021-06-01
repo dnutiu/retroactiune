@@ -14,13 +14,13 @@ namespace Retroactiune.Controllers
 {
     [ApiController]
     [Route("api/v1/[controller]")]
-    public class FeedbackReceiverController : ControllerBase
+    public class FeedbackReceiversController : ControllerBase
     {
         private readonly IOptions<ApiBehaviorOptions> _apiBehaviorOptions;
         private readonly IFeedbackReceiverService _service;
         private readonly IMapper _mapper;
 
-        public FeedbackReceiverController(IFeedbackReceiverService service, IMapper mapper,
+        public FeedbackReceiversController(IFeedbackReceiverService service, IMapper mapper,
             IOptions<ApiBehaviorOptions> apiBehaviorOptions)
         {
             _service = service;
@@ -64,10 +64,12 @@ namespace Retroactiune.Controllers
             });
         }
 
-        [HttpDelete("{id}")]
-        public NoContentResult Delete(long id)
+        [HttpDelete("{guid}")]
+        public async Task<NoContentResult> Delete(
+            [StringLength(24, ErrorMessage = "invalid guid, must be 24 characters", MinimumLength = 24)]
+            string guid)
         {
-            // delete feedback item.
+            await _service.DeleteOneAsync(guid);
             return NoContent();
         }
 
