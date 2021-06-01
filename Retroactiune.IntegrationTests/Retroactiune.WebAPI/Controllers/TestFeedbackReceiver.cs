@@ -4,11 +4,13 @@ using System.Net;
 using System.Net.Http;
 using System.Text;
 using System.Text.Json;
+using System.Threading;
 using System.Threading.Tasks;
 using AutoFixture;
 using AutoFixture.Xunit2;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
+using MongoDB.Bson;
 using MongoDB.Driver;
 using Retroactiune.IntegrationTests.Retroactiune.WebAPI.Fixtures;
 using Retroactiune.Models;
@@ -92,6 +94,52 @@ namespace Retroactiune.IntegrationTests.Retroactiune.WebAPI.Controllers
 
             var createdDocs = await _mongoDb.FeedbackReceiverCollection.CountDocumentsAsync(filter);
             Assert.Equal(feedbackReceiversDto.Count(), createdDocs);
+        }
+
+        [Fact]
+        public async Task Test_DeleteFeedbackReceiver_ValidationFail()
+        {
+            // Arrange
+            await _mongoDb.DropAsync();
+
+            // Test
+            var httpResponse =
+                await _client.DeleteAsync("/api/v1/FeedbackReceivers/abc_not_guid", CancellationToken.None);
+
+            // Assert
+            Assert.Equal(HttpStatusCode.BadRequest, httpResponse.StatusCode);
+        }
+
+        [Theory, AutoData]
+        public async Task Test_DeleteFeedbackReceiver_OK(IEnumerable<FeedbackReceiver> items)
+        {
+            // Arrange
+            var guids = new List<string>();
+            await _mongoDb.DropAsync();
+            byte index = 0;
+            var cleanItems = items.Select(i =>
+            {
+                i.Id = new BsonObjectId(new ObjectId(new byte[] {1, 2, index, 4, 5, 6, 7, 8, 9, index, 11, 14}))
+                    .ToString();
+                index += 1;
+                guids.Add(i.Id);
+                return i;
+            });
+            await _mongoDb.FeedbackReceiverCollection.InsertManyAsync(cleanItems);
+
+
+            // Test
+            foreach (var guid in guids)
+            {
+                var httpResponse =
+                    await _client.DeleteAsync($"/api/v1/FeedbackReceivers/{guid}", CancellationToken.None);
+                Assert.Equal(HttpStatusCode.NoContent, httpResponse.StatusCode);    
+            }
+
+            // Assert
+            var docs = await _mongoDb.FeedbackReceiverCollection.CountDocumentsAsync(FilterDefinition<FeedbackReceiver>
+                .Empty);
+            Assert.Equal(0L, docs);
         }
     }
 }
