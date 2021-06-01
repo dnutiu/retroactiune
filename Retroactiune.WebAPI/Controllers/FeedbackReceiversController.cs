@@ -30,7 +30,7 @@ namespace Retroactiune.Controllers
 
 
         /// <summary>
-        /// Inserts FeedbackReceivers into the database.
+        /// Inserts FeedbackReceiver items into the database.
         /// </summary>
         /// <param name="items">The list of FeedbackReceivers</param>
         /// <returns>A BasicResponse indicating success.</returns>
@@ -64,7 +64,16 @@ namespace Retroactiune.Controllers
             });
         }
 
+        /// <summary>
+        /// Deletes a FeedbackReceiver item from the database.
+        /// </summary>
+        /// <param name="guid">The guid of the item to be deleted.</param>
+        /// <returns>A NoContent result.</returns>
+        /// <response code="204">The delete is successful.</response>
+        /// <response code="400">The delete is unsuccessful.</response>  
         [HttpDelete("{guid}")]
+        [ProducesResponseType(typeof(NoContentResult), StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<NoContentResult> Delete(
             [StringLength(24, ErrorMessage = "invalid guid, must be 24 characters", MinimumLength = 24)]
             string guid)
