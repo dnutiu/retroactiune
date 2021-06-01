@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Retroactiune.Settings
+﻿namespace Retroactiune.Settings
 {
     /// <summary>
     /// Interface for repressing the application's MongoDb settings Options.

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using MongoDB.Driver;
 using Retroactiune.Models;
@@ -23,6 +24,16 @@ namespace Retroactiune.Services
 
         public async Task CreateManyAsync(IEnumerable<FeedbackReceiver> items)
         {
+            if (items == null)
+            {
+                throw new ArgumentNullException(nameof(items));
+            }
+
+            if (!items.Any())
+            {
+                throw new GenericServiceException("items must contain at least one element");
+            }
+            
             try
             {
                 await _collection.InsertManyAsync(items);
