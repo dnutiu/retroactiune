@@ -15,6 +15,7 @@ namespace Retroactiune.Tests.Retroactiune.WebAPI.Controllers
         [Fact]
         public async Task Post_Fail_Creation_No_items()
         {
+            // Arrange
             var mapper = TestUtils.GetMapper();
             var mockService = new Mock<IFeedbackReceiverService>();
 
@@ -30,6 +31,7 @@ namespace Retroactiune.Tests.Retroactiune.WebAPI.Controllers
         [Theory, AutoData]
         public async Task Post_Successful_Creation_Two_items(IEnumerable<FeedbackReceiverDto> items)
         {
+            // Arrange
             var mapper = TestUtils.GetMapper();
             var mockService = new Mock<IFeedbackReceiverService>();
 
@@ -40,6 +42,23 @@ namespace Retroactiune.Tests.Retroactiune.WebAPI.Controllers
             // Assert
             Assert.IsType<OkObjectResult>(result);
             mockService.Verify(s => s.CreateManyAsync(It.IsAny<IEnumerable<FeedbackReceiver>>()), Times.Once);
+        }
+
+        [Fact]
+        public async Task Delete_Successful()
+        {
+            // Arrange
+            var mapper = TestUtils.GetMapper();
+            var mockService = new Mock<IFeedbackReceiverService>();
+
+            // Test
+            var controller = new FeedbackReceiversController(mockService.Object, mapper, null);
+            var result = await controller.Delete("bad_guid_but_unit_test_works_cause_validation_doesnt");
+
+            // Assert
+            Assert.IsType<NoContentResult>(result);
+            mockService.Verify(s => s.DeleteOneAsync("bad_guid_but_unit_test_works_cause_validation_doesnt"),
+                Times.Once);
         }
     }
 }
