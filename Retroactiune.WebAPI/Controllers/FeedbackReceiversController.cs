@@ -115,15 +115,19 @@ namespace Retroactiune.Controllers
         /// Retrieves a FeedbackReceiver items from the database.
         /// </summary>
         /// <param name="filter">If set, it will filter results for the given guids.</param>
-        /// <param name="offset">If set, it will skip the N items.</param>
-        /// <param name="limit">If set, it will limit the results to N items.</param>
+        /// <param name="offset">If set, it will skip the N items. Allowed range is 1-IntMax.</param>
+        /// <param name="limit">If set, it will limit the results to N items. Allowed range is 1-1000.</param>
         /// <returns>A Ok result with a list of <see cref="FeedbackReceiverOutDto"/>.</returns>
         /// <response code="200">The a list is returned.</response>
         /// <response code="400">The request is invalid.</response>  
         [HttpGet]
         [ProducesResponseType(typeof(IEnumerable<FeedbackReceiverOutDto>), StatusCodes.Status200OK)]
-        public async Task<IActionResult> List([FromQuery] IEnumerable<string> filter, [FromQuery] int offset,
-            [FromQuery] int limit)
+        public async Task<IActionResult> List([FromQuery] IEnumerable<string> filter,
+            [RangeAttribute(1, int.MaxValue, ErrorMessage = "offset is  out of range, allowed ranges [1-IntMax]"),
+             FromQuery]
+            int offset,
+            [RangeAttribute(1, 1000, ErrorMessage = "limit is  out of range, allowed ranges [1-1000]"), FromQuery]
+            int limit)
         {
             return Ok(await _service.FindAsync(filter, offset, limit));
         }
