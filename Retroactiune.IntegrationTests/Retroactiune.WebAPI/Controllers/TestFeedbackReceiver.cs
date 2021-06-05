@@ -195,5 +195,7 @@ namespace Retroactiune.IntegrationTests.Retroactiune.WebAPI.Controllers
             // Assert
             Assert.Equal(HttpStatusCode.BadRequest, httpResponse.StatusCode);
         }
+        
+        // TODO test list
     }
 }

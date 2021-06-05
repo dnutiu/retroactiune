@@ -111,16 +111,21 @@ namespace Retroactiune.Controllers
             return Ok(feedbackReceivers.First());
         }
 
+        /// <summary>
+        /// Retrieves a FeedbackReceiver items from the database.
+        /// </summary>
+        /// <param name="filter">If set, it will filter results for the given guids.</param>
+        /// <param name="offset">If set, it will skip the N items.</param>
+        /// <param name="limit">If set, it will limit the results to N items.</param>
+        /// <returns>A Ok result with a list of <see cref="FeedbackReceiverOutDto"/>.</returns>
+        /// <response code="200">The a list is returned.</response>
+        /// <response code="400">The request is invalid.</response>  
         [HttpGet]
-        public IEnumerable<BasicResponse> List()
+        [ProducesResponseType(typeof(IEnumerable<FeedbackReceiverOutDto>), StatusCodes.Status200OK)]
+        public async Task<IActionResult> List([FromQuery] IEnumerable<string> filter, [FromQuery] int offset,
+            [FromQuery] int limit)
         {
-            // list all feedback items.
-            return Enumerable.Range(1, 5).Select(i =>
-                new BasicResponse()
-                {
-                    Message = "hwlo"
-                }
-            );
+            return Ok(await _service.FindAsync(filter, offset, limit));
         }
     }
 }

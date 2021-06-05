@@ -67,8 +67,8 @@ namespace Retroactiune.Tests.Retroactiune.WebAPI.Controllers
             // Arrange
             var mapper = TestUtils.GetMapper();
             var mockService = new Mock<IFeedbackReceiverService>();
-            mockService.Setup(i => i.FindAsync(It.IsAny<IEnumerable<string>>()))
-                .ReturnsAsync(new FeedbackReceiver[] {new FeedbackReceiver()});
+            mockService.Setup(i => i.FindAsync(It.IsAny<IEnumerable<string>>(), null, null))
+                .ReturnsAsync(new [] {new FeedbackReceiver()});
 
             // Test
             var controller = new FeedbackReceiversController(mockService.Object, mapper, null);
@@ -76,7 +76,7 @@ namespace Retroactiune.Tests.Retroactiune.WebAPI.Controllers
 
             // Assert
             Assert.IsType<OkObjectResult>(result);
-            mockService.Verify(s => s.FindAsync(new[] {"bad_guid_but_unit_test_works_cause_validation_doesnt"}),
+            mockService.Verify(s => s.FindAsync(new[] {"bad_guid_but_unit_test_works_cause_validation_doesnt"}, null, null),
                 Times.Once);
         }
 
@@ -93,8 +93,10 @@ namespace Retroactiune.Tests.Retroactiune.WebAPI.Controllers
 
             // Assert
             Assert.IsType<NotFoundObjectResult>(result);
-            mockService.Verify(s => s.FindAsync(new[] {"bad_guid_but_unit_test_works_cause_validation_doesnt"}),
+            mockService.Verify(s => s.FindAsync(new[] {"bad_guid_but_unit_test_works_cause_validation_doesnt"}, null, null),
                 Times.Once);
         }
+        
+        // TODO: test list
     }
 }

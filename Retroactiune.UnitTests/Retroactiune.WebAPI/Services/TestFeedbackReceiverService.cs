@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using AutoFixture.Xunit2;
@@ -35,7 +36,8 @@ namespace Retroactiune.Tests.Retroactiune.WebAPI.Services
 
             // Test
             var service = new FeedbackReceiverService(mongoClientMock.Object, mongoSettingsMock.Object);
-            await service.CreateManyAsync(items);
+            var feedbackReceivers = items as FeedbackReceiver[] ?? items.ToArray();
+            await service.CreateManyAsync(feedbackReceivers);
 
             // Assert
             mongoClientMock.Verify(i => i.GetDatabase("MyDB", null), Times.Once());
@@ -43,7 +45,7 @@ namespace Retroactiune.Tests.Retroactiune.WebAPI.Services
                 i => i.GetCollection<FeedbackReceiver>("feedback_receiver", It.IsAny<MongoCollectionSettings>()),
                 Times.Once());
             mongoCollectionMock.Verify(
-                i => i.InsertManyAsync(items, It.IsAny<InsertManyOptions>(), It.IsAny<CancellationToken>()),
+                i => i.InsertManyAsync(feedbackReceivers, It.IsAny<InsertManyOptions>(), It.IsAny<CancellationToken>()),
                 Times.Once());
         }
 
@@ -130,7 +132,7 @@ namespace Retroactiune.Tests.Retroactiune.WebAPI.Services
         }
 
         [Fact]
-        public async Task Test_Delete_Ok()
+        public async Task Test_DeleteOneAsync_Ok()
         {
             // Arrange
             var mongoDatabaseMock = new Mock<IMongoDatabase>();
@@ -165,7 +167,7 @@ namespace Retroactiune.Tests.Retroactiune.WebAPI.Services
         }
 
         [Fact]
-        public async Task Test_Get_Ok()
+        public async Task Test_FindAsync_Ok()
         {
             // Arrange
             var mongoDatabaseMock = new Mock<IMongoDatabase>();
@@ -193,7 +195,7 @@ namespace Retroactiune.Tests.Retroactiune.WebAPI.Services
             // Test
             var service = new FeedbackReceiverService(mongoClientMock.Object, mongoSettingsMock.Object);
             var guids = new[] {"insert_guid_here"};
-            await service.FindAsync(guids);
+            await service.FindAsync(guids, 0, 15);
 
             // Assert
             mongoClientMock.Verify(i => i.GetDatabase("MyDB", null), Times.Once());

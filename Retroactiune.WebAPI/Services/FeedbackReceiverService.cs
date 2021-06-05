@@ -58,13 +58,36 @@ namespace Retroactiune.Services
             }
         }
 
-        public async Task<IEnumerable<FeedbackReceiver>> FindAsync(IEnumerable<string> guids)
+        public async Task<IEnumerable<FeedbackReceiver>> FindAsync(IEnumerable<string> guids, int? offset = null,
+            int? limit = null)
         {
             try
             {
-                var filter = new FilterDefinitionBuilder<FeedbackReceiver>();
+                var guidsArr = guids as string[] ?? guids.ToArray();
 
-                var cursor = await _collection.FindAsync(filter.In(i => i.Id, guids));
+                var filterBuilder = new FilterDefinitionBuilder<FeedbackReceiver>();
+                var filterOptions = new FindOptions<FeedbackReceiver, FeedbackReceiver>();
+                var filter = filterBuilder.Empty;
+
+                // Filter for guids
+                if (guidsArr.Any())
+                {
+                    filter = filterBuilder.In(i => i.Id, guidsArr);
+                }
+
+                // Set skip
+                if (offset != null)
+                {
+                    filterOptions.Skip = offset;
+                }
+
+                // Set limit
+                if (limit != null)
+                {
+                    filterOptions.Limit = limit;
+                }
+
+                var cursor = await _collection.FindAsync(filter, filterOptions);
                 return cursor.ToList();
             }
             catch (Exception e)

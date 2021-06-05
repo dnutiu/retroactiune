@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -32,7 +33,7 @@ namespace Retroactiune
             // AutoMapper
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
-            
+
             // Services
             services.AddSingleton<IFeedbackReceiverService, FeedbackReceiverService>();
             services.AddSingleton<IMongoClient, MongoClient>(i =>
@@ -40,10 +41,14 @@ namespace Retroactiune
                 var settings = i.GetService<IOptions<RetroactiuneDbSettings>>();
                 return new MongoClient(settings.Value.ConnectionString);
             });
-            
+
             // WebAPI
             services.AddControllers();
-            services.AddSwaggerGen();
+            services.AddSwaggerGen(c =>
+            {
+                var filePath = Path.Combine(AppContext.BaseDirectory, "Retroactiune.WebAPI.xml");
+                c.IncludeXmlComments(filePath);
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
