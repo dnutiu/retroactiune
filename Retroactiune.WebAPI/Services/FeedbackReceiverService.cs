@@ -29,18 +29,19 @@ namespace Retroactiune.Services
                 throw new ArgumentNullException(nameof(items));
             }
 
-            if (!items.Any())
+            var feedbackReceivers = items as FeedbackReceiver[] ?? items.ToArray();
+            if (!feedbackReceivers.Any())
             {
                 throw new GenericServiceException("items must contain at least one element");
             }
 
             try
             {
-                await _collection.InsertManyAsync(items);
+                await _collection.InsertManyAsync(feedbackReceivers);
             }
             catch (Exception e)
             {
-                throw new GenericServiceException($"Operation failed: {e.Message}");
+                throw new GenericServiceException($"Operation failed: {e.Message} {e.StackTrace}");
             }
         }
 
@@ -53,7 +54,7 @@ namespace Retroactiune.Services
             }
             catch (Exception e)
             {
-                throw new GenericServiceException($"Operation failed: {e.Message}");
+                throw new GenericServiceException($"Operation failed: {e.Message} {e.StackTrace}");
             }
         }
 
@@ -68,7 +69,7 @@ namespace Retroactiune.Services
             }
             catch (Exception e)
             {
-                throw new GenericServiceException($"Operation failed: {e.Message}");
+                throw new GenericServiceException($"Operation failed: {e.Message} {e.StackTrace}");
             }
         }
     }

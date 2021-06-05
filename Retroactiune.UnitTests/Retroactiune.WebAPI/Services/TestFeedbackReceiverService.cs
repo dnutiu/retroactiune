@@ -163,5 +163,47 @@ namespace Retroactiune.Tests.Retroactiune.WebAPI.Services
                 i => i.DeleteOneAsync(It.IsAny<FilterDefinition<FeedbackReceiver>>(), It.IsAny<CancellationToken>()),
                 Times.Once());
         }
+
+        [Fact]
+        public async Task Test_Get_Ok()
+        {
+            // Arrange
+            var mongoDatabaseMock = new Mock<IMongoDatabase>();
+            var mongoClientMock = new Mock<IMongoClient>();
+            var mongoSettingsMock = new Mock<IMongoDbSettings>();
+            var mongoCollectionMock = new Mock<IMongoCollection<FeedbackReceiver>>();
+            var mongoCursorMock = new Mock<IAsyncCursor<FeedbackReceiver>>();
+
+            mongoSettingsMock.SetupGet(i => i.DatabaseName).Returns("MyDB");
+            mongoSettingsMock.SetupGet(i => i.FeedbackReceiverCollectionName).Returns("feedback_receiver");
+
+            mongoClientMock
+                .Setup(stub => stub.GetDatabase(It.IsAny<string>(), It.IsAny<MongoDatabaseSettings>()))
+                .Returns(mongoDatabaseMock.Object);
+
+            mongoDatabaseMock
+                .Setup(i => i.GetCollection<FeedbackReceiver>(It.IsAny<string>(), It.IsAny<MongoCollectionSettings>()))
+                .Returns(mongoCollectionMock.Object);
+
+            mongoCollectionMock
+                .Setup(i => i.FindAsync(It.IsAny<FilterDefinition<FeedbackReceiver>>(),
+                    It.IsAny<FindOptions<FeedbackReceiver, FeedbackReceiver>>(), It.IsAny<CancellationToken>()))
+                .ReturnsAsync(mongoCursorMock.Object);
+
+            // Test
+            var service = new FeedbackReceiverService(mongoClientMock.Object, mongoSettingsMock.Object);
+            var guids = new[] {"insert_guid_here"};
+            await service.FindAsync(guids);
+
+            // Assert
+            mongoClientMock.Verify(i => i.GetDatabase("MyDB", null), Times.Once());
+            mongoDatabaseMock.Verify(
+                i => i.GetCollection<FeedbackReceiver>("feedback_receiver", It.IsAny<MongoCollectionSettings>()),
+                Times.Once());
+            mongoCollectionMock.Verify(
+                i => i.FindAsync(It.IsAny<FilterDefinition<FeedbackReceiver>>(),
+                    It.IsAny<FindOptions<FeedbackReceiver, FeedbackReceiver>>(), It.IsAny<CancellationToken>()),
+                Times.Once);
+        }
     }
 }

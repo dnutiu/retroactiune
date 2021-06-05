@@ -99,7 +99,8 @@ namespace Retroactiune.Controllers
             string guid)
         {
             var result = await _service.FindAsync(new[] {guid});
-            if (!result.Any())
+            var feedbackReceivers = result as FeedbackReceiver[] ?? result.ToArray();
+            if (!feedbackReceivers.Any())
             {
                 return NotFound(new BasicResponse()
                 {
@@ -107,7 +108,7 @@ namespace Retroactiune.Controllers
                 });
             }
 
-            return Ok(result.First());
+            return Ok(feedbackReceivers.First());
         }
 
         [HttpGet]

@@ -8,6 +8,7 @@ namespace Retroactiune
         public MappingProfile()
         {
             CreateMap<FeedbackReceiver, FeedbackReceiverInDto>().ReverseMap();
+            CreateMap<FeedbackReceiver, FeedbackReceiverOutDto>();
         }
     }
 }

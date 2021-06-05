@@ -60,5 +60,41 @@ namespace Retroactiune.Tests.Retroactiune.WebAPI.Controllers
             mockService.Verify(s => s.DeleteOneAsync("bad_guid_but_unit_test_works_cause_validation_doesnt"),
                 Times.Once);
         }
+
+        [Fact]
+        public async Task Get_Successful()
+        {
+            // Arrange
+            var mapper = TestUtils.GetMapper();
+            var mockService = new Mock<IFeedbackReceiverService>();
+            mockService.Setup(i => i.FindAsync(It.IsAny<IEnumerable<string>>()))
+                .ReturnsAsync(new FeedbackReceiver[] {new FeedbackReceiver()});
+
+            // Test
+            var controller = new FeedbackReceiversController(mockService.Object, mapper, null);
+            var result = await controller.Get("bad_guid_but_unit_test_works_cause_validation_doesnt");
+
+            // Assert
+            Assert.IsType<OkObjectResult>(result);
+            mockService.Verify(s => s.FindAsync(new[] {"bad_guid_but_unit_test_works_cause_validation_doesnt"}),
+                Times.Once);
+        }
+
+        [Fact]
+        public async Task Get_NotFound()
+        {
+            // Arrange
+            var mapper = TestUtils.GetMapper();
+            var mockService = new Mock<IFeedbackReceiverService>();
+
+            // Test
+            var controller = new FeedbackReceiversController(mockService.Object, mapper, null);
+            var result = await controller.Get("bad_guid_but_unit_test_works_cause_validation_doesnt");
+
+            // Assert
+            Assert.IsType<NotFoundObjectResult>(result);
+            mockService.Verify(s => s.FindAsync(new[] {"bad_guid_but_unit_test_works_cause_validation_doesnt"}),
+                Times.Once);
+        }
     }
 }

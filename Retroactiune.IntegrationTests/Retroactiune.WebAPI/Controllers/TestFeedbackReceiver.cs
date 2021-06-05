@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -33,7 +34,7 @@ namespace Retroactiune.IntegrationTests.Retroactiune.WebAPI.Controllers
 
 
         [Fact]
-        public async Task Test_CreateFeedbackReceiver_NoContent()
+        public async Task Test_Create_NoContent()
         {
             var httpResponse = await _client.PostAsync("/api/v1/FeedbackReceivers/",
                 new StringContent("[]", Encoding.UTF8, "application/json"));
@@ -41,7 +42,7 @@ namespace Retroactiune.IntegrationTests.Retroactiune.WebAPI.Controllers
         }
 
         [Fact]
-        public async Task Test_CreateFeedbackReceiver_NoName()
+        public async Task Test_Create_NoName()
         {
             // Arrange
             var fixture = new Fixture();
@@ -59,7 +60,7 @@ namespace Retroactiune.IntegrationTests.Retroactiune.WebAPI.Controllers
         }
 
         [Fact]
-        public async Task Test_CreateFeedbackReceiver_NoDescription()
+        public async Task Test_Create_NoDescription()
         {
             // Arrange
             var fixture = new Fixture();
@@ -77,7 +78,7 @@ namespace Retroactiune.IntegrationTests.Retroactiune.WebAPI.Controllers
         }
 
         [Theory, AutoData]
-        public async Task Test_CreateFeedbackReceiver_Ok(IEnumerable<FeedbackReceiverInDto> items)
+        public async Task Test_Create_Ok(IEnumerable<FeedbackReceiverInDto> items)
         {
             // Arrange
             await _mongoDb.DropAsync();
@@ -97,7 +98,7 @@ namespace Retroactiune.IntegrationTests.Retroactiune.WebAPI.Controllers
         }
 
         [Fact]
-        public async Task Test_DeleteFeedbackReceiver_ValidationFail()
+        public async Task Test_Delete_ValidationFail()
         {
             // Arrange
             await _mongoDb.DropAsync();
@@ -111,7 +112,7 @@ namespace Retroactiune.IntegrationTests.Retroactiune.WebAPI.Controllers
         }
 
         [Theory, AutoData]
-        public async Task Test_DeleteFeedbackReceiver_OK(IEnumerable<FeedbackReceiver> items)
+        public async Task Test_Delete_OK(IEnumerable<FeedbackReceiver> items)
         {
             // Arrange
             var guids = new List<string>();
@@ -133,13 +134,66 @@ namespace Retroactiune.IntegrationTests.Retroactiune.WebAPI.Controllers
             {
                 var httpResponse =
                     await _client.DeleteAsync($"/api/v1/FeedbackReceivers/{guid}", CancellationToken.None);
-                Assert.Equal(HttpStatusCode.NoContent, httpResponse.StatusCode);    
+                Assert.Equal(HttpStatusCode.NoContent, httpResponse.StatusCode);
             }
 
             // Assert
             var docs = await _mongoDb.FeedbackReceiverCollection.CountDocumentsAsync(FilterDefinition<FeedbackReceiver>
                 .Empty);
             Assert.Equal(0L, docs);
+        }
+
+        [Fact]
+        public async Task Test_Get_Ok()
+        {
+            // Arrange
+            await _mongoDb.DropAsync();
+            var feedbackReceiver = new FeedbackReceiver()
+            {
+                Id = new BsonObjectId(new ObjectId(new byte[] {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 14})).ToString(),
+                Name = "N4m3",
+                Description = "someting",
+                CreatedAt = DateTime.Parse("2020-02-01")
+            };
+
+            await _mongoDb.FeedbackReceiverCollection.InsertManyAsync(new[] {feedbackReceiver});
+
+            // Test
+            var httpResponse =
+                await _client.GetAsync($"/api/v1/FeedbackReceivers/{feedbackReceiver.Id}", CancellationToken.None);
+            var item = await httpResponse.Content.ReadAsStringAsync();
+
+            Assert.Equal(HttpStatusCode.OK, httpResponse.StatusCode);
+            Assert.Equal(
+                "{\"id\":\"0102030405060708090a0b0e\",\"name\":\"N4m3\",\"description\":\"someting\",\"createdAt\":\"2020-01-31T22:00:00Z\"}",
+                item);
+        }
+
+        [Fact]
+        public async Task Test_Get_NotFound()
+        {
+            // Arrange
+            await _mongoDb.DropAsync();
+
+            // Test
+            var httpResponse = await _client.GetAsync("/api/v1/FeedbackReceivers/0102030405060708090a0b0e",
+                CancellationToken.None);
+
+            // Assert
+            Assert.Equal(HttpStatusCode.NotFound, httpResponse.StatusCode);
+        }
+
+        [Fact]
+        public async Task Test_Get_BadRequest()
+        {
+            // Arrange
+            await _mongoDb.DropAsync();
+
+            // Test
+            var httpResponse = await _client.GetAsync("/api/v1/FeedbackReceivers/xxx", CancellationToken.None);
+
+            // Assert
+            Assert.Equal(HttpStatusCode.BadRequest, httpResponse.StatusCode);
         }
     }
 }
