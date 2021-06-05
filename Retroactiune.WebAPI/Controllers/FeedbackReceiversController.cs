@@ -39,12 +39,12 @@ namespace Retroactiune.Controllers
         [HttpPost]
         [ProducesResponseType(typeof(BasicResponse), StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> Post([Required] IEnumerable<FeedbackReceiverDto> items)
+        public async Task<IActionResult> Post([Required] IEnumerable<FeedbackReceiverInDto> items)
         {
             var feedbackReceiversDto = items.ToList();
             if (!feedbackReceiversDto.Any())
             {
-                ModelState.AddModelError(nameof(IEnumerable<FeedbackReceiverDto>),
+                ModelState.AddModelError(nameof(IEnumerable<FeedbackReceiverInDto>),
                     "At least one FeedbackReceiver item is required.");
                 return _apiBehaviorOptions?.Value.InvalidModelStateResponseFactory(ControllerContext);
             }
@@ -82,14 +82,32 @@ namespace Retroactiune.Controllers
             return NoContent();
         }
 
-        [HttpGet("{id}")]
-        public BasicResponse Get(long id)
+        /// <summary>
+        /// Retrieves a FeedbackReceiver item from the database.
+        /// </summary>
+        /// <param name="guid">The guid of the item to be retrieved.</param>
+        /// <returns>A Ok result with a <see cref="FeedbackReceiverOutDto"/>.</returns>
+        /// <response code="200">The item returned successfully.</response>
+        /// <response code="400">The request is invalid.</response>  
+        /// <response code="404">The item was not found.</response>  
+        [HttpGet("{guid}")]
+        [ProducesResponseType(typeof(FeedbackReceiverOutDto), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(BasicResponse), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> Get(
+            [StringLength(24, ErrorMessage = "invalid guid, must be 24 characters", MinimumLength = 24)]
+            string guid)
         {
-            // get feedback item from db
-            return new BasicResponse()
+            var result = await _service.FindAsync(new[] {guid});
+            if (!result.Any())
             {
-                Message = "hwlo"
-            };
+                return NotFound(new BasicResponse()
+                {
+                    Message = $"Item with guid {guid} was not found."
+                });
+            }
+
+            return Ok(result.First());
         }
 
         [HttpGet]

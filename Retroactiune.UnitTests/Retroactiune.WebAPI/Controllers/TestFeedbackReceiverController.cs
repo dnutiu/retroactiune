@@ -21,7 +21,7 @@ namespace Retroactiune.Tests.Retroactiune.WebAPI.Controllers
 
             // Test
             var controller = new FeedbackReceiversController(mockService.Object, mapper, null);
-            var result = await controller.Post(new List<FeedbackReceiverDto>());
+            var result = await controller.Post(new List<FeedbackReceiverInDto>());
 
             // Assert, null because we don't have the ApiBehaviourOptions set, which would generate the IActionResult for the invalid input.
             Assert.Null(result);
@@ -29,7 +29,7 @@ namespace Retroactiune.Tests.Retroactiune.WebAPI.Controllers
         }
 
         [Theory, AutoData]
-        public async Task Post_Successful_Creation_Two_items(IEnumerable<FeedbackReceiverDto> items)
+        public async Task Post_Successful_Creation_Two_items(IEnumerable<FeedbackReceiverInDto> items)
         {
             // Arrange
             var mapper = TestUtils.GetMapper();

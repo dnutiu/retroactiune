@@ -56,5 +56,20 @@ namespace Retroactiune.Services
                 throw new GenericServiceException($"Operation failed: {e.Message}");
             }
         }
+
+        public async Task<IEnumerable<FeedbackReceiver>> FindAsync(IEnumerable<string> guids)
+        {
+            try
+            {
+                var filter = new FilterDefinitionBuilder<FeedbackReceiver>();
+
+                var cursor = await _collection.FindAsync(filter.In(i => i.Id, guids));
+                return cursor.ToList();
+            }
+            catch (Exception e)
+            {
+                throw new GenericServiceException($"Operation failed: {e.Message}");
+            }
+        }
     }
 }

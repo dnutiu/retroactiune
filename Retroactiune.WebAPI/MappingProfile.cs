@@ -7,7 +7,7 @@ namespace Retroactiune
     {
         public MappingProfile()
         {
-            CreateMap<FeedbackReceiver, FeedbackReceiverDto>().ReverseMap();
+            CreateMap<FeedbackReceiver, FeedbackReceiverInDto>().ReverseMap();
         }
     }
 }

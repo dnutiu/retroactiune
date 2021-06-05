@@ -45,10 +45,10 @@ namespace Retroactiune.IntegrationTests.Retroactiune.WebAPI.Controllers
         {
             // Arrange
             var fixture = new Fixture();
-            var item = fixture.Create<FeedbackReceiverDto>();
+            var item = fixture.Create<FeedbackReceiverInDto>();
             item.Name = null;
 
-            var jsonContent = JsonSerializer.Serialize(new List<FeedbackReceiverDto> {item});
+            var jsonContent = JsonSerializer.Serialize(new List<FeedbackReceiverInDto> {item});
 
             // Test
             var httpResponse = await _client.PostAsync("/api/v1/FeedbackReceivers/",
@@ -63,10 +63,10 @@ namespace Retroactiune.IntegrationTests.Retroactiune.WebAPI.Controllers
         {
             // Arrange
             var fixture = new Fixture();
-            var item = fixture.Create<FeedbackReceiverDto>();
+            var item = fixture.Create<FeedbackReceiverInDto>();
             item.Description = null;
 
-            var jsonContent = JsonSerializer.Serialize(new List<FeedbackReceiverDto> {item});
+            var jsonContent = JsonSerializer.Serialize(new List<FeedbackReceiverInDto> {item});
 
             // Test
             var httpResponse = await _client.PostAsync("/api/v1/FeedbackReceivers/",
@@ -77,7 +77,7 @@ namespace Retroactiune.IntegrationTests.Retroactiune.WebAPI.Controllers
         }
 
         [Theory, AutoData]
-        public async Task Test_CreateFeedbackReceiver_Ok(IEnumerable<FeedbackReceiverDto> items)
+        public async Task Test_CreateFeedbackReceiver_Ok(IEnumerable<FeedbackReceiverInDto> items)
         {
             // Arrange
             await _mongoDb.DropAsync();
