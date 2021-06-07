@@ -8,7 +8,7 @@ using Retroactiune.Settings;
 
 namespace Retroactiune.IntegrationTests.Retroactiune.WebAPI.Fixtures
 {
-    public class MongoDbFixture : IDisposable
+    public class MongoDbFixture : IAsyncDisposable
     {
         private IMongoDbSettings _settings;
         public IMongoDatabase Database { get; }
@@ -34,10 +34,9 @@ namespace Retroactiune.IntegrationTests.Retroactiune.WebAPI.Fixtures
                 });
         }
 
-
-        public void Dispose()
+        public async ValueTask DisposeAsync()
         {
-            DropAsync().GetAwaiter().GetResult();
+            await DropAsync();
         }
     }
 }
