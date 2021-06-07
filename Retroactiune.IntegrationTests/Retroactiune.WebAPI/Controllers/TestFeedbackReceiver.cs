@@ -149,12 +149,12 @@ namespace Retroactiune.IntegrationTests.Retroactiune.WebAPI.Controllers
         {
             // Arrange
             await _mongoDb.DropAsync();
-            var feedbackReceiver = new FeedbackReceiver()
+            var feedbackReceiver = new FeedbackReceiver
             {
                 Id = new BsonObjectId(new ObjectId(new byte[] {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 14})).ToString(),
                 Name = "N4m3",
                 Description = "something",
-                CreatedAt = DateTime.Parse("2020-02-01")
+                CreatedAt = DateTime.UnixEpoch
             };
 
             await _mongoDb.FeedbackReceiverCollection.InsertManyAsync(new[] {feedbackReceiver});
@@ -162,12 +162,11 @@ namespace Retroactiune.IntegrationTests.Retroactiune.WebAPI.Controllers
             // Test
             var httpResponse =
                 await _client.GetAsync($"/api/v1/FeedbackReceivers/{feedbackReceiver.Id}", CancellationToken.None);
-            var item = await httpResponse.Content.ReadAsStringAsync();
+            var item = JsonSerializer.Deserialize<FeedbackReceiver>(
+                await httpResponse.Content.ReadAsStringAsync());
 
             Assert.Equal(HttpStatusCode.OK, httpResponse.StatusCode);
-            Assert.Equal(
-                "{\"id\":\"0102030405060708090a0b0e\",\"name\":\"N4m3\",\"description\":\"someting\",\"createdAt\":\"2020-01-31T22:00:00Z\"}",
-                item);
+            Assert.Equal(feedbackReceiver, item);
         }
 
         [Fact]
