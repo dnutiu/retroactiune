@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using AutoFixture.Xunit2;
 using Microsoft.AspNetCore.Mvc;
@@ -96,7 +97,21 @@ namespace Retroactiune.Tests.Retroactiune.WebAPI.Controllers
             mockService.Verify(s => s.FindAsync(new[] {"bad_guid_but_unit_test_works_cause_validation_doesnt"}, null, null),
                 Times.Once);
         }
-        
-        // TODO: test list
+
+        [Theory, AutoData]
+        public async Task List_Ok(IEnumerable<string> filter, int offset, int limit)
+        {
+            // Arrange
+            var mapper = TestUtils.GetMapper();
+            var mockService = new Mock<IFeedbackReceiverService>();
+            var filterArr = filter as string[] ?? filter.ToArray();
+            
+            // Test
+            var controller = new FeedbackReceiversController(mockService.Object, mapper, null);
+            var result = await controller.List(filterArr, offset, limit);
+
+            Assert.IsType<OkObjectResult>(result);
+            mockService.Verify(s => s.FindAsync(filterArr, offset, limit), Times.Once);
+        }
     }
 }
