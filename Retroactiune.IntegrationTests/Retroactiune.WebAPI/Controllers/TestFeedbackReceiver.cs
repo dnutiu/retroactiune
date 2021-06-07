@@ -9,6 +9,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using AutoFixture;
 using AutoFixture.Xunit2;
+using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using MongoDB.Bson;
@@ -152,7 +153,7 @@ namespace Retroactiune.IntegrationTests.Retroactiune.WebAPI.Controllers
             {
                 Id = new BsonObjectId(new ObjectId(new byte[] {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 14})).ToString(),
                 Name = "N4m3",
-                Description = "someting",
+                Description = "something",
                 CreatedAt = DateTime.Parse("2020-02-01")
             };
 
@@ -195,7 +196,146 @@ namespace Retroactiune.IntegrationTests.Retroactiune.WebAPI.Controllers
             // Assert
             Assert.Equal(HttpStatusCode.BadRequest, httpResponse.StatusCode);
         }
-        
-        // TODO test list
+
+        [Fact]
+        public async Task Test_List_Ok()
+        {
+            // Arrange
+            await _mongoDb.DropAsync();
+            var feedbackReceivers = new List<FeedbackReceiver>
+            {
+                new FeedbackReceiver
+                {
+                    Id = new BsonObjectId(new ObjectId(new byte[] {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 14})).ToString(),
+                    Name = "N4m3",
+                    Description = "something",
+                    CreatedAt = DateTime.UnixEpoch
+                },
+                new FeedbackReceiver
+                {
+                    Id = new BsonObjectId(new ObjectId(new byte[] {2, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 14})).ToString(),
+                    Name = "N4m3_Two",
+                    Description = "something",
+                    CreatedAt = DateTime.UnixEpoch
+                },
+                new FeedbackReceiver
+                {
+                    Id = new BsonObjectId(new ObjectId(new byte[] {3, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 14})).ToString(),
+                    Name = "N4m3_Three",
+                    Description = "something",
+                    CreatedAt = DateTime.UnixEpoch
+                }
+            };
+
+            await _mongoDb.FeedbackReceiverCollection.InsertManyAsync(feedbackReceivers);
+
+
+            // Test
+            var httpResponse = await _client.GetAsync("/api/v1/FeedbackReceivers/", CancellationToken.None);
+            var items = JsonSerializer.Deserialize<List<FeedbackReceiver>>(
+                await httpResponse.Content.ReadAsStringAsync());
+
+            // Assert
+            Assert.Equal(HttpStatusCode.OK, httpResponse.StatusCode);
+            for (var i = 0; i < feedbackReceivers.Count; i++)
+            {
+                Assert.Equal(feedbackReceivers[i], items[i]);
+            }
+        }
+
+        [Fact]
+        public async Task Test_List_Ok_Filter()
+        {
+            // Arrange
+            await _mongoDb.DropAsync();
+            var feedbackReceivers = new List<FeedbackReceiver>
+            {
+                new FeedbackReceiver
+                {
+                    Id = new BsonObjectId(new ObjectId(new byte[] {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 14})).ToString(),
+                    Name = "N4m3",
+                    Description = "something",
+                    CreatedAt = DateTime.UnixEpoch
+                },
+                new FeedbackReceiver
+                {
+                    Id = new BsonObjectId(new ObjectId(new byte[] {2, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 14})).ToString(),
+                    Name = "N4m3_Two",
+                    Description = "something",
+                    CreatedAt = DateTime.UnixEpoch
+                },
+                new FeedbackReceiver
+                {
+                    Id = new BsonObjectId(new ObjectId(new byte[] {3, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 14})).ToString(),
+                    Name = "N4m3_Three",
+                    Description = "something",
+                    CreatedAt = DateTime.UnixEpoch
+                }
+            };
+
+            await _mongoDb.FeedbackReceiverCollection.InsertManyAsync(feedbackReceivers);
+
+
+            // Test
+            var qb = new QueryBuilder {{"filter", new[] {feedbackReceivers[0].Id, feedbackReceivers[1].Id}}};
+            var httpResponse =
+                await _client.GetAsync("/api/v1/FeedbackReceivers/" + qb,
+                    CancellationToken.None);
+            var items = JsonSerializer.Deserialize<List<FeedbackReceiver>>(
+                await httpResponse.Content.ReadAsStringAsync());
+
+            // Assert
+            Assert.Equal(HttpStatusCode.OK, httpResponse.StatusCode);
+            Assert.Equal(2, items.Count);
+            for (var i = 0; i < 2; i++)
+            {
+                Assert.Equal(feedbackReceivers[i], items[i]);
+            }
+        }
+
+        [Fact]
+        public async Task Test_List_Ok_LimitOffset()
+        {
+            // Arrange
+            await _mongoDb.DropAsync();
+            var feedbackReceivers = new List<FeedbackReceiver>
+            {
+                new FeedbackReceiver
+                {
+                    Id = new BsonObjectId(new ObjectId(new byte[] {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 14})).ToString(),
+                    Name = "N4m3",
+                    Description = "something",
+                    CreatedAt = DateTime.UnixEpoch
+                },
+                new FeedbackReceiver
+                {
+                    Id = new BsonObjectId(new ObjectId(new byte[] {2, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 14})).ToString(),
+                    Name = "N4m3_Two",
+                    Description = "something",
+                    CreatedAt = DateTime.UnixEpoch
+                },
+                new FeedbackReceiver
+                {
+                    Id = new BsonObjectId(new ObjectId(new byte[] {3, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 14})).ToString(),
+                    Name = "N4m3_Three",
+                    Description = "something",
+                    CreatedAt = DateTime.UnixEpoch
+                }
+            };
+
+            await _mongoDb.FeedbackReceiverCollection.InsertManyAsync(feedbackReceivers);
+
+
+            // Test
+            var qb = new QueryBuilder {{"offset", "1"}, {"limit", "1"}};
+            var httpResponse = await _client.GetAsync("/api/v1/FeedbackReceivers/" + qb, CancellationToken.None);
+            var items = JsonSerializer.Deserialize<List<FeedbackReceiver>>(
+                await httpResponse.Content.ReadAsStringAsync());
+
+            // Assert
+            Assert.Equal(HttpStatusCode.OK, httpResponse.StatusCode);
+            Assert.Single(items);
+            Assert.Equal(feedbackReceivers[1], items[0]);
+        }
     }
 }
