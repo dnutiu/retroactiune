@@ -6,7 +6,7 @@ using MongoDB.Bson.Serialization.Attributes;
 namespace Retroactiune.Models
 {
     /// <summary>
-    /// FeedbackReceiver is the thing that receives feedback.
+    /// FeedbackReceiver is the entity that receives feedback from the users.
     /// </summary>
     public class FeedbackReceiver
     {

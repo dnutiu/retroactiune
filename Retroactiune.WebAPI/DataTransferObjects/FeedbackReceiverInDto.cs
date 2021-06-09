@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using Retroactiune.Models;
 
-namespace Retroactiune.Models
+namespace Retroactiune.DataTransferObjects
 {
     /// <summary>
     /// FeedbackReceiverInDto is the DTO for <see cref="FeedbackReceiver"/>, used in incoming requests.
@@ -12,12 +13,5 @@ namespace Retroactiune.Models
 
         [Required]
         public string Description { get; set; }
-    }
-    
-    /// <summary>
-    /// FeedbackReceiverDto is the DTO for <see cref="FeedbackReceiver"/>, used in outgoing requests.
-    /// </summary>
-    public class FeedbackReceiverOutDto : FeedbackReceiver
-    {
     }
 }

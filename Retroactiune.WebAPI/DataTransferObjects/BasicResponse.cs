@@ -1,4 +1,4 @@
-﻿namespace Retroactiune.Models
+﻿namespace Retroactiune.DataTransferObjects
 {
     /// <summary>
     /// Simple response model that contains a message.

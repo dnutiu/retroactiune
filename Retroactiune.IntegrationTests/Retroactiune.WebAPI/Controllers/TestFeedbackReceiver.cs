@@ -14,6 +14,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using MongoDB.Bson;
 using MongoDB.Driver;
+using Retroactiune.DataTransferObjects;
 using Retroactiune.IntegrationTests.Retroactiune.WebAPI.Fixtures;
 using Retroactiune.Models;
 using Retroactiune.Settings;

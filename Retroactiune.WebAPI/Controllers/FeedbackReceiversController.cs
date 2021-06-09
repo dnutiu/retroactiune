@@ -7,6 +7,7 @@ using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
+using Retroactiune.DataTransferObjects;
 using Retroactiune.Models;
 using Retroactiune.Services;
 
@@ -34,10 +35,10 @@ namespace Retroactiune.Controllers
         /// </summary>
         /// <param name="items">The list of FeedbackReceivers</param>
         /// <returns>A BasicResponse indicating success.</returns>
-        /// <response code="201">Returns the newly created item</response>
+        /// <response code="200">Returns an ok message.</response>
         /// <response code="400">If the items is invalid</response>  
         [HttpPost]
-        [ProducesResponseType(typeof(BasicResponse), StatusCodes.Status201Created)]
+        [ProducesResponseType(typeof(BasicResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> Post([Required] IEnumerable<FeedbackReceiverInDto> items)
         {

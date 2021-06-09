@@ -10,7 +10,7 @@ namespace Retroactiune.IntegrationTests.Retroactiune.WebAPI.Fixtures
 {
     public class MongoDbFixture : IAsyncDisposable
     {
-        private IMongoDbSettings _settings;
+        private readonly IMongoDbSettings _settings;
         public IMongoDatabase Database { get; }
 
         public IMongoCollection<FeedbackReceiver> FeedbackReceiverCollection =>

@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Retroactiune.DataTransferObjects;
 using Retroactiune.Models;
 
 namespace Retroactiune
