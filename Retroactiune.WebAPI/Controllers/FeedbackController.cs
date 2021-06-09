@@ -2,7 +2,7 @@
 
 namespace Retroactiune.Controllers
 {
-    public class Feedback : ControllerBase
+    public class FeedbackController : ControllerBase
     {
         // TODO Add feedback, list feedback, delete feedback, ged feedback.
     }
