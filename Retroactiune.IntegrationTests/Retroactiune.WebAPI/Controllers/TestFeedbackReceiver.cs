@@ -14,10 +14,10 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using MongoDB.Bson;
 using MongoDB.Driver;
+using Retroactiune.Database;
 using Retroactiune.DataTransferObjects;
 using Retroactiune.IntegrationTests.Retroactiune.WebAPI.Fixtures;
 using Retroactiune.Models;
-using Retroactiune.Settings;
 using Xunit;
 
 namespace Retroactiune.IntegrationTests.Retroactiune.WebAPI.Controllers
@@ -30,7 +30,7 @@ namespace Retroactiune.IntegrationTests.Retroactiune.WebAPI.Controllers
         public TestFeedbackReceiver(WebApiTestingFactory factory)
         {
             _client = factory.CreateClient();
-            var dbSettings = factory.Services.GetService<IOptions<RetroactiuneDbSettings>>();
+            var dbSettings = factory.Services.GetService<IOptions<DatabaseSettings>>();
             _mongoDb = new MongoDbFixture(dbSettings);
         }
 

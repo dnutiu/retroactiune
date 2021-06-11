@@ -4,8 +4,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using MongoDB.Driver;
+using Retroactiune.Database;
 using Retroactiune.Services;
-using Retroactiune.Settings;
 
 namespace Retroactiune
 {
@@ -26,9 +26,9 @@ namespace Retroactiune
         public void ConfigureServices(IServiceCollection services)
         {
             // Database Configuration
-            services.Configure<RetroactiuneDbSettings>(Configuration.GetSection(nameof(RetroactiuneDbSettings)));
-            services.AddSingleton<IMongoDbSettings>(sp =>
-                sp.GetRequiredService<IOptions<RetroactiuneDbSettings>>().Value);
+            services.Configure<DatabaseSettings>(Configuration.GetSection(nameof(DatabaseSettings)));
+            services.AddSingleton<IDatabaseSettings>(sp =>
+                sp.GetRequiredService<IOptions<DatabaseSettings>>().Value);
 
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
@@ -36,7 +36,7 @@ namespace Retroactiune
             services.AddSingleton<IFeedbackReceiverService, FeedbackReceiverService>();
             services.AddSingleton<IMongoClient, MongoClient>(i =>
             {
-                var settings = i.GetService<IOptions<RetroactiuneDbSettings>>();
+                var settings = i.GetService<IOptions<DatabaseSettings>>();
                 return new MongoClient(settings.Value.ConnectionString);
             });
             

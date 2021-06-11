@@ -5,9 +5,9 @@ using System.Threading.Tasks;
 using AutoFixture.Xunit2;
 using MongoDB.Driver;
 using Moq;
+using Retroactiune.Database;
 using Retroactiune.Models;
 using Retroactiune.Services;
-using Retroactiune.Settings;
 using Xunit;
 
 namespace Retroactiune.Tests.Retroactiune.WebAPI.Services
@@ -20,7 +20,7 @@ namespace Retroactiune.Tests.Retroactiune.WebAPI.Services
             // Arrange
             var mongoDatabaseMock = new Mock<IMongoDatabase>();
             var mongoClientMock = new Mock<IMongoClient>();
-            var mongoSettingsMock = new Mock<IMongoDbSettings>();
+            var mongoSettingsMock = new Mock<IDatabaseSettings>();
             var mongoCollectionMock = new Mock<IMongoCollection<FeedbackReceiver>>();
 
             mongoSettingsMock.SetupGet(i => i.DatabaseName).Returns("MyDB");
@@ -55,7 +55,7 @@ namespace Retroactiune.Tests.Retroactiune.WebAPI.Services
             // Arrange
             var mongoDatabaseMock = new Mock<IMongoDatabase>();
             var mongoClientMock = new Mock<IMongoClient>();
-            var mongoSettingsMock = new Mock<IMongoDbSettings>();
+            var mongoSettingsMock = new Mock<IDatabaseSettings>();
             var mongoCollectionMock = new Mock<IMongoCollection<FeedbackReceiver>>();
 
             mongoSettingsMock.SetupGet(i => i.DatabaseName).Returns("MyDB");
@@ -96,7 +96,7 @@ namespace Retroactiune.Tests.Retroactiune.WebAPI.Services
             // Arrange
             var mongoDatabaseMock = new Mock<IMongoDatabase>();
             var mongoClientMock = new Mock<IMongoClient>();
-            var mongoSettingsMock = new Mock<IMongoDbSettings>();
+            var mongoSettingsMock = new Mock<IDatabaseSettings>();
             var mongoCollectionMock = new Mock<IMongoCollection<FeedbackReceiver>>();
 
             mongoSettingsMock.SetupGet(i => i.DatabaseName).Returns("MyDB");
@@ -137,7 +137,7 @@ namespace Retroactiune.Tests.Retroactiune.WebAPI.Services
             // Arrange
             var mongoDatabaseMock = new Mock<IMongoDatabase>();
             var mongoClientMock = new Mock<IMongoClient>();
-            var mongoSettingsMock = new Mock<IMongoDbSettings>();
+            var mongoSettingsMock = new Mock<IDatabaseSettings>();
             var mongoCollectionMock = new Mock<IMongoCollection<FeedbackReceiver>>();
 
             mongoSettingsMock.SetupGet(i => i.DatabaseName).Returns("MyDB");
@@ -172,7 +172,7 @@ namespace Retroactiune.Tests.Retroactiune.WebAPI.Services
             // Arrange
             var mongoDatabaseMock = new Mock<IMongoDatabase>();
             var mongoClientMock = new Mock<IMongoClient>();
-            var mongoSettingsMock = new Mock<IMongoDbSettings>();
+            var mongoSettingsMock = new Mock<IDatabaseSettings>();
             var mongoCollectionMock = new Mock<IMongoCollection<FeedbackReceiver>>();
             var mongoCursorMock = new Mock<IAsyncCursor<FeedbackReceiver>>();
 

@@ -1,6 +1,10 @@
-﻿namespace Retroactiune.Settings
+﻿namespace Retroactiune.Database
 {
-    public class RetroactiuneDbSettings : IMongoDbSettings
+    /// <summary>
+    /// DatabaseSettingsOptions acts as a model for the database settings, it is used in conjunction with the built in
+    /// ASP .NET Core configuration options.
+    /// </summary>
+    public class DatabaseSettings : IDatabaseSettings
     {
         public string FeedbackCollectionName { get; set; }
         public string TokensCollectionName { get; set; }

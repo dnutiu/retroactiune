@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using MongoDB.Driver;
+using Retroactiune.Database;
 using Retroactiune.Models;
-using Retroactiune.Settings;
 
 namespace Retroactiune.Services
 {
@@ -11,7 +11,7 @@ namespace Retroactiune.Services
     {
         private readonly IMongoCollection<Token> _collection;
 
-        public TokensService(IMongoClient client, IMongoDbSettings settings)
+        public TokensService(IMongoClient client, IDatabaseSettings settings)
         {
             var database = client.GetDatabase(settings.DatabaseName);
             _collection = database.GetCollection<Token>(settings.TokensCollectionName);

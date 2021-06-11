@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using MongoDB.Driver;
+using Retroactiune.Database;
 using Retroactiune.Models;
-using Retroactiune.Settings;
 
 namespace Retroactiune.Services
 {
@@ -16,7 +16,7 @@ namespace Retroactiune.Services
     {
         private readonly IMongoCollection<FeedbackReceiver> _collection;
 
-        public FeedbackReceiverService(IMongoClient client, IMongoDbSettings settings)
+        public FeedbackReceiverService(IMongoClient client, IDatabaseSettings settings)
         {
             var database = client.GetDatabase(settings.DatabaseName);
             _collection = database.GetCollection<FeedbackReceiver>(settings.FeedbackReceiverCollectionName);

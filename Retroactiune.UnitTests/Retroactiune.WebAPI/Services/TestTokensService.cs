@@ -3,9 +3,9 @@ using System.Threading;
 using System.Threading.Tasks;
 using MongoDB.Driver;
 using Moq;
+using Retroactiune.Database;
 using Retroactiune.Models;
 using Retroactiune.Services;
-using Retroactiune.Settings;
 using Xunit;
 
 namespace Retroactiune.Tests.Retroactiune.WebAPI.Services
@@ -18,7 +18,7 @@ namespace Retroactiune.Tests.Retroactiune.WebAPI.Services
             // Setup
             var mongoDatabaseMock = new Mock<IMongoDatabase>();
             var mongoClientMock = new Mock<IMongoClient>();
-            var mongoSettingsMock = new Mock<IMongoDbSettings>();
+            var mongoSettingsMock = new Mock<IDatabaseSettings>();
             var mongoCollectionMock = new Mock<IMongoCollection<Token>>();
 
             mongoSettingsMock.SetupGet(i => i.DatabaseName).Returns("MyDB");
@@ -45,7 +45,7 @@ namespace Retroactiune.Tests.Retroactiune.WebAPI.Services
             // Setup
             var mongoDatabaseMock = new Mock<IMongoDatabase>();
             var mongoClientMock = new Mock<IMongoClient>();
-            var mongoSettingsMock = new Mock<IMongoDbSettings>();
+            var mongoSettingsMock = new Mock<IDatabaseSettings>();
             var mongoCollectionMock = new Mock<IMongoCollection<Token>>();
 
             mongoSettingsMock.SetupGet(i => i.DatabaseName).Returns("MyDB");

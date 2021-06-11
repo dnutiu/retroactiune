@@ -1,9 +1,9 @@
-﻿namespace Retroactiune.Settings
+﻿namespace Retroactiune.Database
 {
     /// <summary>
-    /// Interface for repressing the application's MongoDb settings Options.
+    /// Interface for repressing the application's database settings.
     /// </summary>
-    public interface IMongoDbSettings
+    public interface IDatabaseSettings
     {
         public string FeedbackCollectionName { get; set; }
         public string TokensCollectionName { get; set; }

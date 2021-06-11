@@ -3,20 +3,20 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Options;
 using MongoDB.Driver;
+using Retroactiune.Database;
 using Retroactiune.Models;
-using Retroactiune.Settings;
 
 namespace Retroactiune.IntegrationTests.Retroactiune.WebAPI.Fixtures
 {
     public class MongoDbFixture : IAsyncDisposable
     {
-        private readonly IMongoDbSettings _settings;
+        private readonly IDatabaseSettings _settings;
         public IMongoDatabase Database { get; }
 
         public IMongoCollection<FeedbackReceiver> FeedbackReceiverCollection =>
             Database.GetCollection<FeedbackReceiver>(_settings.FeedbackReceiverCollectionName);
 
-        public MongoDbFixture(IOptions<RetroactiuneDbSettings> options)
+        public MongoDbFixture(IOptions<DatabaseSettings> options)
         {
             _settings = options.Value;
             var client = new MongoClient(_settings.ConnectionString);
