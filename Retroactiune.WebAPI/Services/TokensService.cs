@@ -20,12 +20,11 @@ namespace Retroactiune.Services
         public async Task GenerateTokensAsync(int numberOfTokens, string feedbackReceiverGuid,
             DateTime? expiryTime = null)
         {
-            // TODO: Test unit
             if (numberOfTokens <= 0)
             {
                 throw new ArgumentException("numberOfTokens must be positive");
             }
-            
+
             var token = new List<Token>();
             for (var i = 0; i < numberOfTokens; i++)
             {

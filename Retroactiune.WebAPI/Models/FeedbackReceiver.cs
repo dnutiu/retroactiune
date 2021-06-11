@@ -27,7 +27,7 @@ namespace Retroactiune.Models
                 return false;
             }
 
-            return Id.Equals(convertedObj.Id) && Name.Equals(convertedObj.Name) &&
+            return string.Equals(Id, convertedObj.Id) && string.Equals(Name, convertedObj.Name) &&
                    Description.Equals(convertedObj.Description) && CreatedAt.Equals(convertedObj.CreatedAt);
         }
 
