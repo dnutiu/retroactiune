@@ -1,10 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using MongoDB.Driver;
 using Retroactiune.Models;
 using Retroactiune.Settings;
 
-// TODO: Test
 namespace Retroactiune.Services
 {
     public class TokensService : ITokensService
@@ -17,9 +17,28 @@ namespace Retroactiune.Services
             _collection = database.GetCollection<Token>(settings.TokensCollectionName);
         }
 
-        public async Task CreateManyAsync(IEnumerable<Token> items)
+        public async Task GenerateTokensAsync(int numberOfTokens, string feedbackReceiverGuid,
+            DateTime? expiryTime = null)
         {
-            throw new System.NotImplementedException();
+            // TODO: Test unit
+            if (numberOfTokens <= 0)
+            {
+                throw new ArgumentException("numberOfTokens must be positive");
+            }
+            
+            var token = new List<Token>();
+            for (var i = 0; i < numberOfTokens; i++)
+            {
+                token.Add(new Token
+                {
+                    CreatedAt = DateTime.UtcNow,
+                    FeedbackReceiverId = feedbackReceiverGuid,
+                    ExpiryTime = null,
+                    TimeUsed = null
+                });
+            }
+
+            await _collection.InsertManyAsync(token);
         }
     }
 }

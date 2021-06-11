@@ -1,11 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using System;
 using System.Threading.Tasks;
-using Retroactiune.Models;
 
 namespace Retroactiune.Services
 {
     public interface ITokensService
     {
-        public Task CreateManyAsync(IEnumerable<Token> items);
+        public Task GenerateTokensAsync(int numberOfTokens, string feedbackReceiverGuid,
+            DateTime? expiryTime = null);
     }
 }
