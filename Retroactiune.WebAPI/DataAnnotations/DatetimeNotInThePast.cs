@@ -13,7 +13,6 @@ namespace Retroactiune.DataAnnotations
         /// <returns>True if the date is null or in the future, false otherwise.</returns>
         public override bool IsValid(object value)
         {
-            // TODO: Test
             var now = DateTime.UtcNow;
             var date = value as DateTime?;
             return !(date <= now);
