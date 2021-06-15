@@ -11,10 +11,13 @@ namespace Retroactiune.IntegrationTests.Retroactiune.WebAPI.Fixtures
     public class MongoDbFixture : IAsyncDisposable
     {
         private readonly IDatabaseSettings _settings;
-        public IMongoDatabase Database { get; }
+        private IMongoDatabase Database { get; }
 
         public IMongoCollection<FeedbackReceiver> FeedbackReceiverCollection =>
             Database.GetCollection<FeedbackReceiver>(_settings.FeedbackReceiverCollectionName);
+
+        public IMongoCollection<Token> TokensCollection =>
+            Database.GetCollection<Token>(_settings.TokensCollectionName);
 
         public MongoDbFixture(IOptions<DatabaseSettings> options)
         {

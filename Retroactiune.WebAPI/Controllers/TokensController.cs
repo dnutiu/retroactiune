@@ -22,8 +22,7 @@ namespace Retroactiune.Controllers
             _feedbackReceiverService = feedbackReceiverService;
             _tokensService = tokensService;
         }
-
-        // TODO: Test integration.
+        
         /// <summary>
         /// Creates a new batch of tokens, the tokens are tied to a FeedbackReceiver and are used by the client
         /// when leaving Feedback.

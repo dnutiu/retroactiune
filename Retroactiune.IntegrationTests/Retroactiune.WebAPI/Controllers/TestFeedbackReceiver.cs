@@ -22,6 +22,7 @@ using Xunit;
 
 namespace Retroactiune.IntegrationTests.Retroactiune.WebAPI.Controllers
 {
+    [Collection("IntegrationTests")]
     public class TestFeedbackReceiver : IClassFixture<WebApiTestingFactory>
     {
         private readonly MongoDbFixture _mongoDb;
@@ -38,6 +39,7 @@ namespace Retroactiune.IntegrationTests.Retroactiune.WebAPI.Controllers
         [Fact]
         public async Task Test_Create_NoContent()
         {
+            await _mongoDb.DropAsync();
             var httpResponse = await _client.PostAsync("/api/v1/FeedbackReceivers/",
                 new StringContent("[]", Encoding.UTF8, "application/json"));
             Assert.Equal(HttpStatusCode.BadRequest, httpResponse.StatusCode);
@@ -47,6 +49,7 @@ namespace Retroactiune.IntegrationTests.Retroactiune.WebAPI.Controllers
         public async Task Test_Create_NoName()
         {
             // Arrange
+            await _mongoDb.DropAsync();
             var fixture = new Fixture();
             var item = fixture.Create<FeedbackReceiverInDto>();
             item.Name = null;
@@ -65,6 +68,7 @@ namespace Retroactiune.IntegrationTests.Retroactiune.WebAPI.Controllers
         public async Task Test_Create_NoDescription()
         {
             // Arrange
+            await _mongoDb.DropAsync();
             var fixture = new Fixture();
             var item = fixture.Create<FeedbackReceiverInDto>();
             item.Description = null;
@@ -117,18 +121,19 @@ namespace Retroactiune.IntegrationTests.Retroactiune.WebAPI.Controllers
         public async Task Test_Delete_OK(IEnumerable<FeedbackReceiver> items)
         {
             // Arrange
+            await _mongoDb.DropAsync();
             var guids = new List<string>();
             await _mongoDb.DropAsync();
             byte index = 0;
-            var cleanItems = items.Select(i =>
+            var feedbackReceivers = items as FeedbackReceiver[] ?? items.ToArray();
+            foreach (var i in feedbackReceivers)
             {
                 i.Id = new BsonObjectId(new ObjectId(new byte[] {1, 2, index, 4, 5, 6, 7, 8, 9, index, 11, 14}))
                     .ToString();
                 index += 1;
                 guids.Add(i.Id);
-                return i;
-            });
-            await _mongoDb.FeedbackReceiverCollection.InsertManyAsync(cleanItems);
+            }
+            await _mongoDb.FeedbackReceiverCollection.InsertManyAsync(feedbackReceivers);
 
 
             // Test

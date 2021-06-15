@@ -70,7 +70,7 @@ namespace Retroactiune.Tests.Retroactiune.WebAPI.Services
             var item = new Token
             {
                 Id = null,
-                ExpiryTime = null,
+                ExpiryTime = expiryTime,
                 TimeUsed = null,
                 FeedbackReceiverId = "Hello",
                 CreatedAt = expiryTime

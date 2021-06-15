@@ -32,7 +32,7 @@ namespace Retroactiune.Services
                 {
                     CreatedAt = DateTime.UtcNow,
                     FeedbackReceiverId = feedbackReceiverGuid,
-                    ExpiryTime = null,
+                    ExpiryTime = expiryTime,
                     TimeUsed = null
                 });
             }
