@@ -62,6 +62,24 @@ namespace Retroactiune.Tests.Retroactiune.WebAPI.Controllers
             mockService.Verify(s => s.DeleteManyAsync(new[] {"bad_guid_but_unit_test_works_cause_validation_doesnt"}),
                 Times.Once);
         }
+        
+        [Fact]
+        public async Task DeleteMany_Successful()
+        {
+            // Arrange
+            var mapper = TestUtils.GetMapper();
+            var mockService = new Mock<IFeedbackReceiverService>();
+
+            // Test
+            var controller = new FeedbackReceiversController(mockService.Object, mapper, null);
+            var items = new[] {"bad_guid_but_unit_test_works_cause_validation_doesnt", "2", "3"};
+            var result = await controller.DeleteMany(items);
+
+            // Assert
+            Assert.IsType<NoContentResult>(result);
+            mockService.Verify(s => s.DeleteManyAsync(items),
+                Times.Once);
+        }
 
         [Fact]
         public async Task Get_Successful()

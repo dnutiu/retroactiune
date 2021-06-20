@@ -143,9 +143,8 @@ namespace Retroactiune.Controllers
         [HttpDelete]
         [ProducesResponseType(typeof(NoContentResult), StatusCodes.Status204NoContent)]
         [ProducesResponseType(typeof(BasicResponse),StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> DeleteTokens([Required] IEnumerable<string> ids)
+        public async Task<IActionResult> DeleteMany([Required] IEnumerable<string> ids)
         {
-            // TODO: Unit test, integration test.
             try
             {
                 await _service.DeleteManyAsync(ids);

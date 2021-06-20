@@ -4,7 +4,6 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Text;
-using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using AutoFixture;
@@ -14,11 +13,13 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using MongoDB.Bson;
 using MongoDB.Driver;
+using Newtonsoft.Json;
 using Retroactiune.Database;
 using Retroactiune.DataTransferObjects;
 using Retroactiune.IntegrationTests.Retroactiune.WebAPI.Fixtures;
 using Retroactiune.Models;
 using Xunit;
+using JsonSerializer = System.Text.Json.JsonSerializer;
 
 namespace Retroactiune.IntegrationTests.Retroactiune.WebAPI.Controllers
 {
@@ -145,6 +146,40 @@ namespace Retroactiune.IntegrationTests.Retroactiune.WebAPI.Controllers
             }
 
             // Assert
+            var docs = await _mongoDb.FeedbackReceiverCollection.CountDocumentsAsync(FilterDefinition<FeedbackReceiver>
+                .Empty);
+            Assert.Equal(0L, docs);
+        }
+        
+        [Theory, AutoData]
+        public async Task Test_DeleteMany_OK(IEnumerable<FeedbackReceiver> items)
+        {
+            // Arrange
+            await _mongoDb.DropAsync();
+            var guids = new List<string>();
+            await _mongoDb.DropAsync();
+            byte index = 0;
+            var feedbackReceivers = items as FeedbackReceiver[] ?? items.ToArray();
+            foreach (var i in feedbackReceivers)
+            {
+                i.Id = new BsonObjectId(new ObjectId(new byte[] {1, 2, index, 4, 5, 6, 7, 8, 9, index, 11, 14}))
+                    .ToString();
+                index += 1;
+                guids.Add(i.Id);
+            }
+            await _mongoDb.FeedbackReceiverCollection.InsertManyAsync(feedbackReceivers);
+
+
+            // Test
+            var request = new HttpRequestMessage {
+                Method = HttpMethod.Delete,
+                RequestUri = new Uri($"{_client.BaseAddress.AbsoluteUri}api/v1/FeedbackReceivers"),
+                Content = new StringContent(JsonConvert.SerializeObject(guids), Encoding.UTF8, "application/json")
+            };
+            var httpResponse = await _client.SendAsync(request);
+            Assert.Equal(HttpStatusCode.NoContent, httpResponse.StatusCode);
+
+                // Assert
             var docs = await _mongoDb.FeedbackReceiverCollection.CountDocumentsAsync(FilterDefinition<FeedbackReceiver>
                 .Empty);
             Assert.Equal(0L, docs);
