@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
@@ -12,7 +13,7 @@ namespace Retroactiune.Controllers
     [Route("api/v1/[controller]")]
     public class TokensController : ControllerBase
     {
-        // TODO: Add tokens, list tokens (unused, used), delete tokens.
+        // TODO: list tokens (unused, used)
 
         private readonly IFeedbackReceiverService _feedbackReceiverService;
         private readonly ITokensService _tokensService;
@@ -22,7 +23,7 @@ namespace Retroactiune.Controllers
             _feedbackReceiverService = feedbackReceiverService;
             _tokensService = tokensService;
         }
-        
+
         /// <summary>
         /// Creates a new batch of tokens, the tokens are tied to a FeedbackReceiver and are used by the client
         /// when leaving Feedback.
@@ -47,11 +48,57 @@ namespace Retroactiune.Controllers
                 });
             }
 
-            await _tokensService.GenerateTokensAsync(generateTokensDto.NumberOfTokens, feedbackReceiverId, generateTokensDto.ExpiryTime);
+            await _tokensService.GenerateTokensAsync(generateTokensDto.NumberOfTokens, feedbackReceiverId,
+                generateTokensDto.ExpiryTime);
             return Ok(new BasicResponse
             {
                 Message = "Tokens generated."
             });
+        }
+
+        /// <summary>
+        /// Deletes tokens identified by ids.
+        /// </summary>
+        /// <param name="tokenIds">A list of token ids.</param>
+        /// <response code="204">The request to delete the items has been submitted.</response>
+        /// <response code="404">The request is invalid.</response>  
+        /// <returns></returns>
+        [HttpDelete]
+        [ProducesResponseType(typeof(NoContentResult), StatusCodes.Status204NoContent)]
+        [ProducesResponseType(typeof(BasicResponse),StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> DeleteTokens([Required] IEnumerable<string> tokenIds)
+        {
+            // TODO: Unit test, integration test.
+            try
+            {
+                await _tokensService.DeleteTokens(tokenIds);
+                return NoContent();
+            }
+            catch (GenericServiceException e)
+            {
+                return BadRequest(new BasicResponse
+                {
+                    Message = e.Message
+                });
+            }
+        }
+        
+        /// <summary>
+        /// Deletes a Token given it's guid.
+        /// </summary>
+        /// <param name="guid">The guid of the item to be deleted.</param>
+        /// <returns>A NoContent result.</returns>
+        /// <response code="204">The delete is submitted.</response>
+        /// <response code="400">The request is invalid.</response>  
+        [HttpDelete("{guid}")]
+        [ProducesResponseType(typeof(NoContentResult), StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<NoContentResult> DeleteToken(
+            [StringLength(24, ErrorMessage = "invalid guid, must be 24 characters", MinimumLength = 24)] string guid)
+        {
+            // TODO: Unit test, integration test.
+            await _tokensService.DeleteTokens(new []{ guid });
+            return NoContent();
         }
     }
 }

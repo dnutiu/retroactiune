@@ -39,5 +39,19 @@ namespace Retroactiune.Services
 
             await _collection.InsertManyAsync(token);
         }
+
+        public async Task DeleteTokens(IEnumerable<string> tokenIds)
+        {
+            // TODO: Unit test.
+            try
+            {
+                var filter = new FilterDefinitionBuilder<Token>();
+                await _collection.DeleteManyAsync(filter.In(i => i.Id, tokenIds));
+            }
+            catch (Exception e)
+            {
+                throw new GenericServiceException($"Operation failed: {e.Message} {e.StackTrace}");
+            }
+        }
     }
 }
