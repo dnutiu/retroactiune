@@ -42,7 +42,6 @@ namespace Retroactiune.Services
 
         public async Task DeleteTokens(IEnumerable<string> tokenIds)
         {
-            // TODO: Unit test.
             try
             {
                 var filter = new FilterDefinitionBuilder<Token>();

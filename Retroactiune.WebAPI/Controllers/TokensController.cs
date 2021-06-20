@@ -68,7 +68,6 @@ namespace Retroactiune.Controllers
         [ProducesResponseType(typeof(BasicResponse),StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> DeleteTokens([Required] IEnumerable<string> tokenIds)
         {
-            // TODO: Unit test, integration test.
             try
             {
                 await _tokensService.DeleteTokens(tokenIds);
@@ -93,12 +92,21 @@ namespace Retroactiune.Controllers
         [HttpDelete("{guid}")]
         [ProducesResponseType(typeof(NoContentResult), StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<NoContentResult> DeleteToken(
+        public async Task<IActionResult> DeleteToken(
             [StringLength(24, ErrorMessage = "invalid guid, must be 24 characters", MinimumLength = 24)] string guid)
         {
-            // TODO: Unit test, integration test.
-            await _tokensService.DeleteTokens(new []{ guid });
-            return NoContent();
+            try
+            {
+                await _tokensService.DeleteTokens(new []{ guid });
+                return NoContent();
+            }
+            catch (GenericServiceException e)
+            {
+                return BadRequest(new BasicResponse
+                {
+                    Message = e.Message
+                });
+            }
         }
     }
 }

@@ -80,5 +80,39 @@ namespace Retroactiune.Tests.Retroactiune.WebAPI.Services
                     It.IsAny<InsertManyOptions>(),
                     It.IsAny<CancellationToken>()), Times.Once);
         }
+
+        [Fact]
+        public async Task Test_DeleteTokens_Ok()
+        {
+            // Setup
+            var mongoDatabaseMock = new Mock<IMongoDatabase>();
+            var mongoClientMock = new Mock<IMongoClient>();
+            var mongoSettingsMock = new Mock<IDatabaseSettings>();
+            var mongoCollectionMock = new Mock<IMongoCollection<Token>>();
+
+            mongoSettingsMock.SetupGet(i => i.DatabaseName).Returns("MyDB");
+            mongoSettingsMock.SetupGet(i => i.TokensCollectionName).Returns("tokens");
+
+            mongoClientMock
+                .Setup(stub => stub.GetDatabase(It.IsAny<string>(),
+                    It.IsAny<MongoDatabaseSettings>()))
+                .Returns(mongoDatabaseMock.Object);
+
+            mongoDatabaseMock
+                .Setup(i => i.GetCollection<Token>(It.IsAny<string>(),
+                    It.IsAny<MongoCollectionSettings>()))
+                .Returns(mongoCollectionMock.Object);
+
+            // Test
+            var service = new TokensService(mongoClientMock.Object, mongoSettingsMock.Object);
+            await service.DeleteTokens(new[] {"test_id"});
+
+            // Assert
+            mongoCollectionMock.Verify(
+                i
+                    => i.DeleteManyAsync(
+                        It.IsAny<FilterDefinition<Token>>(),
+                        It.IsAny<CancellationToken>()), Times.Once);
+        }
     }
 }

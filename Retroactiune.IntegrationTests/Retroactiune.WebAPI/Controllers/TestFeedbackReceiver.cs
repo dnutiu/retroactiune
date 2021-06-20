@@ -124,7 +124,6 @@ namespace Retroactiune.IntegrationTests.Retroactiune.WebAPI.Controllers
             // Arrange
             await _mongoDb.DropAsync();
             var guids = new List<string>();
-            await _mongoDb.DropAsync();
             byte index = 0;
             var feedbackReceivers = items as FeedbackReceiver[] ?? items.ToArray();
             foreach (var i in feedbackReceivers)
@@ -134,6 +133,7 @@ namespace Retroactiune.IntegrationTests.Retroactiune.WebAPI.Controllers
                 index += 1;
                 guids.Add(i.Id);
             }
+
             await _mongoDb.FeedbackReceiverCollection.InsertManyAsync(feedbackReceivers);
 
 
@@ -150,14 +150,13 @@ namespace Retroactiune.IntegrationTests.Retroactiune.WebAPI.Controllers
                 .Empty);
             Assert.Equal(0L, docs);
         }
-        
+
         [Theory, AutoData]
         public async Task Test_DeleteMany_OK(IEnumerable<FeedbackReceiver> items)
         {
             // Arrange
             await _mongoDb.DropAsync();
             var guids = new List<string>();
-            await _mongoDb.DropAsync();
             byte index = 0;
             var feedbackReceivers = items as FeedbackReceiver[] ?? items.ToArray();
             foreach (var i in feedbackReceivers)
@@ -167,19 +166,22 @@ namespace Retroactiune.IntegrationTests.Retroactiune.WebAPI.Controllers
                 index += 1;
                 guids.Add(i.Id);
             }
+
             await _mongoDb.FeedbackReceiverCollection.InsertManyAsync(feedbackReceivers);
 
 
             // Test
-            var request = new HttpRequestMessage {
+            var request = new HttpRequestMessage
+            {
                 Method = HttpMethod.Delete,
                 RequestUri = new Uri($"{_client.BaseAddress.AbsoluteUri}api/v1/FeedbackReceivers"),
+                // ReSharper disable once MethodHasAsyncOverload
                 Content = new StringContent(JsonConvert.SerializeObject(guids), Encoding.UTF8, "application/json")
             };
             var httpResponse = await _client.SendAsync(request);
             Assert.Equal(HttpStatusCode.NoContent, httpResponse.StatusCode);
 
-                // Assert
+            // Assert
             var docs = await _mongoDb.FeedbackReceiverCollection.CountDocumentsAsync(FilterDefinition<FeedbackReceiver>
                 .Empty);
             Assert.Equal(0L, docs);

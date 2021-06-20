@@ -52,5 +52,73 @@ namespace Retroactiune.Tests.Retroactiune.WebAPI.Controllers
             Assert.IsType<OkObjectResult>(result);
             tokens.Verify(i => i.GenerateTokensAsync(2, "froid", null), Times.Once);
         }
+
+        [Fact]
+        public async Task Test_Delete_Ok()
+        {
+            // Arrange
+            var feedbackService = new Mock<IFeedbackReceiverService>();
+            var tokens = new Mock<ITokensService>();
+
+            // Test
+            var controller = new TokensController(feedbackService.Object, tokens.Object);
+            var result = await controller.DeleteToken("my_guid");
+
+            // Assert
+            Assert.IsType<NoContentResult>(result);
+            tokens.Verify(i => i.DeleteTokens(new[] {"my_guid"}), Times.Once);
+        }
+
+        [Fact]
+        public async Task Test_Delete_BadRequest()
+        {
+            // Arrange
+            var feedbackService = new Mock<IFeedbackReceiverService>();
+            var tokens = new Mock<ITokensService>();
+            tokens.Setup(i => i.DeleteTokens(It.IsAny<IEnumerable<string>>()))
+                .Throws(new GenericServiceException("op fail"));
+
+            // Test
+            var controller = new TokensController(feedbackService.Object, tokens.Object);
+            var result = await controller.DeleteToken("my_guid");
+
+            // Assert
+            Assert.IsType<BadRequestObjectResult>(result);
+            tokens.Verify(i => i.DeleteTokens(new[] {"my_guid"}), Times.Once);
+        }
+
+        [Fact]
+        public async Task Test_DeleteMany_Ok()
+        {
+            // Arrange
+            var feedbackService = new Mock<IFeedbackReceiverService>();
+            var tokens = new Mock<ITokensService>();
+
+            // Test
+            var controller = new TokensController(feedbackService.Object, tokens.Object);
+            var result = await controller.DeleteTokens(new[] {"my_guid", "b"});
+
+            // Assert
+            Assert.IsType<NoContentResult>(result);
+            tokens.Verify(i => i.DeleteTokens(new[] {"my_guid", "b"}), Times.Once);
+        }
+
+        [Fact]
+        public async Task Test_DeleteMany_BadRequest()
+        {
+            // Arrange
+            var feedbackService = new Mock<IFeedbackReceiverService>();
+            var tokens = new Mock<ITokensService>();
+            tokens.Setup(i => i.DeleteTokens(It.IsAny<IEnumerable<string>>()))
+                .Throws(new GenericServiceException("op fail"));
+
+            // Test
+            var controller = new TokensController(feedbackService.Object, tokens.Object);
+            var result = await controller.DeleteTokens(new[] {"my_guid", "b"});
+
+            // Assert
+            Assert.IsType<BadRequestObjectResult>(result);
+            tokens.Verify(i => i.DeleteTokens(new[] {"my_guid", "b"}), Times.Once);
+        }
     }
 }
