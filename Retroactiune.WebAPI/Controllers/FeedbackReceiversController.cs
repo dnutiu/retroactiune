@@ -70,8 +70,8 @@ namespace Retroactiune.Controllers
         /// </summary>
         /// <param name="guid">The guid of the item to be deleted.</param>
         /// <returns>A NoContent result.</returns>
-        /// <response code="204">The delete is successful.</response>
-        /// <response code="400">The delete is unsuccessful.</response>  
+        /// <response code="204">The delete is submitted.</response>
+        /// <response code="400">The request is invalid.</response>  
         [HttpDelete("{guid}")]
         [ProducesResponseType(typeof(NoContentResult), StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -79,7 +79,7 @@ namespace Retroactiune.Controllers
             [StringLength(24, ErrorMessage = "invalid guid, must be 24 characters", MinimumLength = 24)]
             string guid)
         {
-            await _service.DeleteOneAsync(guid);
+            await _service.DeleteManyAsync(new [] {guid});
             return NoContent();
         }
 
@@ -131,6 +131,33 @@ namespace Retroactiune.Controllers
             int limit)
         {
             return Ok(await _service.FindAsync(filter, offset, limit));
+        }
+        
+        /// <summary>
+        /// Deletes FeedbackReceiver identified by ids.
+        /// </summary>
+        /// <param name="ids">A list of FeedbackReceiver ids.</param>
+        /// <response code="204">The request to delete the items has been submitted.</response>
+        /// <response code="404">The request is invalid.</response>  
+        /// <returns></returns>
+        [HttpDelete]
+        [ProducesResponseType(typeof(NoContentResult), StatusCodes.Status204NoContent)]
+        [ProducesResponseType(typeof(BasicResponse),StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> DeleteTokens([Required] IEnumerable<string> ids)
+        {
+            // TODO: Unit test, integration test.
+            try
+            {
+                await _service.DeleteManyAsync(ids);
+                return NoContent();
+            }
+            catch (GenericServiceException e)
+            {
+                return BadRequest(new BasicResponse
+                {
+                    Message = e.Message
+                });
+            }
         }
     }
 }

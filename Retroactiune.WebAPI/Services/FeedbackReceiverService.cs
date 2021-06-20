@@ -45,12 +45,12 @@ namespace Retroactiune.Services
             }
         }
 
-        public async Task DeleteOneAsync(string guid)
+        public async Task DeleteManyAsync(IEnumerable<string> guids)
         {
             try
             {
                 var filter = new FilterDefinitionBuilder<FeedbackReceiver>();
-                await _collection.DeleteOneAsync(filter.Eq(i => i.Id, guid));
+                await _collection.DeleteManyAsync(filter.In(i => i.Id, guids));
             }
             catch (Exception e)
             {

@@ -132,7 +132,7 @@ namespace Retroactiune.Tests.Retroactiune.WebAPI.Services
         }
 
         [Fact]
-        public async Task Test_DeleteOneAsync_Ok()
+        public async Task Test_DeleteManyAsync_Ok()
         {
             // Arrange
             var mongoDatabaseMock = new Mock<IMongoDatabase>();
@@ -153,7 +153,7 @@ namespace Retroactiune.Tests.Retroactiune.WebAPI.Services
 
             // Test
             var service = new FeedbackReceiverService(mongoClientMock.Object, mongoSettingsMock.Object);
-            await service.DeleteOneAsync("insert_guid_here");
+            await service.DeleteManyAsync(new []{"insert_guid_here"});
 
             // Assert
             mongoClientMock.Verify(i => i.GetDatabase("MyDB", null), Times.Once());
@@ -162,7 +162,7 @@ namespace Retroactiune.Tests.Retroactiune.WebAPI.Services
                 Times.Once());
 
             mongoCollectionMock.Verify(
-                i => i.DeleteOneAsync(It.IsAny<FilterDefinition<FeedbackReceiver>>(), It.IsAny<CancellationToken>()),
+                i => i.DeleteManyAsync(It.IsAny<FilterDefinition<FeedbackReceiver>>(), It.IsAny<CancellationToken>()),
                 Times.Once());
         }
 

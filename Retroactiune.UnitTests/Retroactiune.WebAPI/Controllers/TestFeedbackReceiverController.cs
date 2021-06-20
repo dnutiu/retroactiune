@@ -59,7 +59,7 @@ namespace Retroactiune.Tests.Retroactiune.WebAPI.Controllers
 
             // Assert
             Assert.IsType<NoContentResult>(result);
-            mockService.Verify(s => s.DeleteOneAsync("bad_guid_but_unit_test_works_cause_validation_doesnt"),
+            mockService.Verify(s => s.DeleteManyAsync(new[] {"bad_guid_but_unit_test_works_cause_validation_doesnt"}),
                 Times.Once);
         }
 
@@ -70,7 +70,7 @@ namespace Retroactiune.Tests.Retroactiune.WebAPI.Controllers
             var mapper = TestUtils.GetMapper();
             var mockService = new Mock<IFeedbackReceiverService>();
             mockService.Setup(i => i.FindAsync(It.IsAny<IEnumerable<string>>(), null, null))
-                .ReturnsAsync(new [] {new FeedbackReceiver()});
+                .ReturnsAsync(new[] {new FeedbackReceiver()});
 
             // Test
             var controller = new FeedbackReceiversController(mockService.Object, mapper, null);
@@ -78,7 +78,8 @@ namespace Retroactiune.Tests.Retroactiune.WebAPI.Controllers
 
             // Assert
             Assert.IsType<OkObjectResult>(result);
-            mockService.Verify(s => s.FindAsync(new[] {"bad_guid_but_unit_test_works_cause_validation_doesnt"}, null, null),
+            mockService.Verify(
+                s => s.FindAsync(new[] {"bad_guid_but_unit_test_works_cause_validation_doesnt"}, null, null),
                 Times.Once);
         }
 
@@ -95,7 +96,8 @@ namespace Retroactiune.Tests.Retroactiune.WebAPI.Controllers
 
             // Assert
             Assert.IsType<NotFoundObjectResult>(result);
-            mockService.Verify(s => s.FindAsync(new[] {"bad_guid_but_unit_test_works_cause_validation_doesnt"}, null, null),
+            mockService.Verify(
+                s => s.FindAsync(new[] {"bad_guid_but_unit_test_works_cause_validation_doesnt"}, null, null),
                 Times.Once);
         }
 
@@ -106,7 +108,7 @@ namespace Retroactiune.Tests.Retroactiune.WebAPI.Controllers
             var mapper = TestUtils.GetMapper();
             var mockService = new Mock<IFeedbackReceiverService>();
             var filterArr = filter as string[] ?? filter.ToArray();
-            
+
             // Test
             var controller = new FeedbackReceiversController(mockService.Object, mapper, null);
             var result = await controller.List(filterArr, offset, limit);
