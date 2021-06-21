@@ -9,8 +9,9 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using MongoDB.Driver;
-using Retroactiune.Database;
-using Retroactiune.Services;
+using Retroactiune.Core.Interfaces;
+using Retroactiune.Core.Services;
+using Retroactiune.Infrastructure;
 
 namespace Retroactiune
 {

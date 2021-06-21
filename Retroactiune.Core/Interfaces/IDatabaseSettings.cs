@@ -1,4 +1,4 @@
-﻿namespace Retroactiune.Database
+﻿namespace Retroactiune.Core.Interfaces
 {
     /// <summary>
     /// Interface for repressing the application's database settings.

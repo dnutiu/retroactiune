@@ -1,4 +1,4 @@
-﻿using Retroactiune.Models;
+﻿using Retroactiune.Core.Entities;
 
 namespace Retroactiune.DataTransferObjects
 {

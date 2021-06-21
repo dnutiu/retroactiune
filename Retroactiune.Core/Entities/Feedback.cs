@@ -1,4 +1,4 @@
-﻿namespace Retroactiune.Models
+﻿namespace Retroactiune.Core.Entities
 {
     public class Feedback
     {

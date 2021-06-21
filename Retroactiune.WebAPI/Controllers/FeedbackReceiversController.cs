@@ -7,9 +7,10 @@ using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
+using Retroactiune.Core.Entities;
+using Retroactiune.Core.Interfaces;
+using Retroactiune.Core.Services;
 using Retroactiune.DataTransferObjects;
-using Retroactiune.Models;
-using Retroactiune.Services;
 
 namespace Retroactiune.Controllers
 {

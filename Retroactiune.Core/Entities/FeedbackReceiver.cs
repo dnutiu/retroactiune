@@ -3,7 +3,7 @@ using System.Text.Json.Serialization;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 
-namespace Retroactiune.Models
+namespace Retroactiune.Core.Entities
 {
     /// <summary>
     /// FeedbackReceiver is the entity that receives feedback from the users.

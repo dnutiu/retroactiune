@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
+using Retroactiune.Core.Entities;
 using Retroactiune.DataTransferObjects;
-using Retroactiune.Models;
 
 namespace Retroactiune
 {

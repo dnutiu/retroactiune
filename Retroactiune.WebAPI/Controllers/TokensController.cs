@@ -4,8 +4,9 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Retroactiune.Core.Interfaces;
+using Retroactiune.Core.Services;
 using Retroactiune.DataTransferObjects;
-using Retroactiune.Services;
 
 namespace Retroactiune.Controllers
 {
@@ -13,7 +14,10 @@ namespace Retroactiune.Controllers
     [Route("api/v1/[controller]")]
     public class TokensController : ControllerBase
     {
-        // TODO: list tokens (unused, used)
+        // TODO: Implement ListTokens.
+        // Filters for: FeedbackReceiver IDS
+        // for: start < CreatedTime < end
+        // for start < TimeUsed end
 
         private readonly IFeedbackReceiverService _feedbackReceiverService;
         private readonly ITokensService _tokensService;

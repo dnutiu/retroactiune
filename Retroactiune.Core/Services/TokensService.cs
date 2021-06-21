@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using MongoDB.Driver;
-using Retroactiune.Database;
-using Retroactiune.Models;
+using Retroactiune.Core.Entities;
+using Retroactiune.Core.Interfaces;
 
-namespace Retroactiune.Services
+namespace Retroactiune.Core.Services
 {
     public class TokensService : ITokensService
     {

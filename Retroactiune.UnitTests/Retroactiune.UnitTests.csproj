@@ -20,7 +20,12 @@
     </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\Retroactiune.Core\Retroactiune.Core.csproj" />
       <ProjectReference Include="..\Retroactiune.WebAPI\Retroactiune.WebAPI.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Retroactiune.Core" />
     </ItemGroup>
 
 </Project>

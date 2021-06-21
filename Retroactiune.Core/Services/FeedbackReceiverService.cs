@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using MongoDB.Driver;
-using Retroactiune.Database;
-using Retroactiune.Models;
+using Retroactiune.Core.Entities;
+using Retroactiune.Core.Interfaces;
 
-namespace Retroactiune.Services
+namespace Retroactiune.Core.Services
 {
     /// <summary>
     /// Service that simplifies access to the database for managing FeedbackReceiver items.

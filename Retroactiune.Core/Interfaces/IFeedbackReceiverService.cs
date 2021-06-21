@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using Retroactiune.Models;
+using Retroactiune.Core.Entities;
 
-namespace Retroactiune.Services
+namespace Retroactiune.Core.Interfaces
 {
     public interface IFeedbackReceiverService
     {

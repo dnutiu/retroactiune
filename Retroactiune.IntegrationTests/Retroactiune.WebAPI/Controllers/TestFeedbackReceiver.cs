@@ -14,10 +14,10 @@ using Microsoft.Extensions.Options;
 using MongoDB.Bson;
 using MongoDB.Driver;
 using Newtonsoft.Json;
-using Retroactiune.Database;
+using Retroactiune.Core.Entities;
 using Retroactiune.DataTransferObjects;
+using Retroactiune.Infrastructure;
 using Retroactiune.IntegrationTests.Retroactiune.WebAPI.Fixtures;
-using Retroactiune.Models;
 using Xunit;
 using JsonSerializer = System.Text.Json.JsonSerializer;
 

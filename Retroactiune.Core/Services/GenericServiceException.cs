@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Retroactiune.Services
+namespace Retroactiune.Core.Services
 {
     public class GenericServiceException : Exception
     {

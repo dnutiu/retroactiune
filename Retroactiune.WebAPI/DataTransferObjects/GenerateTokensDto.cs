@@ -1,6 +1,6 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
-using Retroactiune.DataAnnotations;
+using Retroactiune.Core.DataAnnotations;
 
 namespace Retroactiune.DataTransferObjects
 {

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 
-namespace Retroactiune.DataAnnotations
+namespace Retroactiune.Core.DataAnnotations
 {
     public class DatetimeNotInThePast : ValidationAttribute
     {

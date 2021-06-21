@@ -12,9 +12,9 @@ using Microsoft.Extensions.Options;
 using MongoDB.Bson;
 using MongoDB.Driver;
 using Newtonsoft.Json;
-using Retroactiune.Database;
+using Retroactiune.Core.Entities;
+using Retroactiune.Infrastructure;
 using Retroactiune.IntegrationTests.Retroactiune.WebAPI.Fixtures;
-using Retroactiune.Models;
 using Xunit;
 
 namespace Retroactiune.IntegrationTests.Retroactiune.WebAPI.Controllers

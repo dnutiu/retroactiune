@@ -3,8 +3,9 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Options;
 using MongoDB.Driver;
-using Retroactiune.Database;
-using Retroactiune.Models;
+using Retroactiune.Core.Entities;
+using Retroactiune.Core.Interfaces;
+using Retroactiune.Infrastructure;
 
 namespace Retroactiune.IntegrationTests.Retroactiune.WebAPI.Fixtures
 {

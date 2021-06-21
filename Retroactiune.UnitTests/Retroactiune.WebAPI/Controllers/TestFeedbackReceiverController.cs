@@ -5,9 +5,9 @@ using AutoFixture.Xunit2;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using Retroactiune.Controllers;
+using Retroactiune.Core.Entities;
+using Retroactiune.Core.Interfaces;
 using Retroactiune.DataTransferObjects;
-using Retroactiune.Models;
-using Retroactiune.Services;
 using Xunit;
 
 namespace Retroactiune.Tests.Retroactiune.WebAPI.Controllers

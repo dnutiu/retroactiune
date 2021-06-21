@@ -3,11 +3,11 @@ using System.Text.Json.Serialization;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 
-namespace Retroactiune.Models
+namespace Retroactiune.Core.Entities
 {
     /// <summary>
     /// Token represents a token.
-    /// Token is used to authorize a <see cref="Feedback"/> for the <see cref="FeedbackReceiver"/>.
+    /// Token is used to authorize a <see cref="FeedbackReceiver"/> for the <see cref="Feedback"/>.
     /// </summary>
     public class Token
     {

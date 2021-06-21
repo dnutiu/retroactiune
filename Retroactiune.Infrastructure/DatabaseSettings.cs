@@ -1,4 +1,6 @@
-﻿namespace Retroactiune.Database
+﻿using Retroactiune.Core.Interfaces;
+
+namespace Retroactiune.Infrastructure
 {
     /// <summary>
     /// DatabaseSettingsOptions acts as a model for the database settings, it is used in conjunction with the built in

@@ -5,12 +5,12 @@ using System.Threading.Tasks;
 using AutoFixture.Xunit2;
 using MongoDB.Driver;
 using Moq;
-using Retroactiune.Database;
-using Retroactiune.Models;
-using Retroactiune.Services;
+using Retroactiune.Core.Entities;
+using Retroactiune.Core.Interfaces;
+using Retroactiune.Core.Services;
 using Xunit;
 
-namespace Retroactiune.Tests.Retroactiune.WebAPI.Services
+namespace Retroactiune.Tests.Retroactiune.Core.Services
 {
     public class TestFeedbackReceiverService
     {

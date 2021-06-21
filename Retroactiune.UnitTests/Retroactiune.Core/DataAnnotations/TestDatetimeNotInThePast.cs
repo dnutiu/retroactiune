@@ -1,8 +1,8 @@
 ﻿using System;
-using Retroactiune.DataAnnotations;
+using Retroactiune.Core.DataAnnotations;
 using Xunit;
 
-namespace Retroactiune.Tests.Retroactiune.WebAPI.DataAnnotations
+namespace Retroactiune.Tests.Retroactiune.Core.DataAnnotations
 {
     public class TestDatetimeNotInThePast
     {
