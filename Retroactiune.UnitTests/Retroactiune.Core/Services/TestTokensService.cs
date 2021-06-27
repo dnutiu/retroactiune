@@ -35,7 +35,7 @@ namespace Retroactiune.Tests.Retroactiune.Core.Services
                 .Returns(mongoCollectionMock.Object);
 
             // Test & Assert
-            var service = new TokensService(mongoClientMock.Object, mongoSettingsMock.Object);
+            var service = new TokenService(mongoClientMock.Object, mongoSettingsMock.Object);
             await Assert.ThrowsAsync<ArgumentException>(async () => { await service.GenerateTokensAsync(-1, ""); });
         }
 
@@ -63,7 +63,7 @@ namespace Retroactiune.Tests.Retroactiune.Core.Services
 
             // Test
             var expiryTime = DateTime.UtcNow;
-            var service = new TokensService(mongoClientMock.Object, mongoSettingsMock.Object);
+            var service = new TokenService(mongoClientMock.Object, mongoSettingsMock.Object);
             await service.GenerateTokensAsync(3, "Hello", expiryTime);
 
             // Assert
@@ -104,7 +104,7 @@ namespace Retroactiune.Tests.Retroactiune.Core.Services
                 .Returns(mongoCollectionMock.Object);
 
             // Test
-            var service = new TokensService(mongoClientMock.Object, mongoSettingsMock.Object);
+            var service = new TokenService(mongoClientMock.Object, mongoSettingsMock.Object);
             await service.DeleteTokens(new[] {"test_id"});
 
             // Assert

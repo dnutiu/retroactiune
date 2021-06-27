@@ -8,11 +8,11 @@ using Retroactiune.Core.Interfaces;
 
 namespace Retroactiune.Core.Services
 {
-    public class TokensService : ITokensService
+    public class TokenService : ITokensService
     {
         private readonly IMongoCollection<Token> _collection;
 
-        public TokensService(IMongoClient client, IDatabaseSettings settings)
+        public TokenService(IMongoClient client, IDatabaseSettings settings)
         {
             var database = client.GetDatabase(settings.DatabaseName);
             _collection = database.GetCollection<Token>(settings.TokensCollectionName);
