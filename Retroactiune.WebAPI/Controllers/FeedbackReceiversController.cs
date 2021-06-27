@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Retroactiune.Core.Entities;
 using Retroactiune.Core.Interfaces;
@@ -21,13 +22,15 @@ namespace Retroactiune.Controllers
         private readonly IOptions<ApiBehaviorOptions> _apiBehaviorOptions;
         private readonly IFeedbackReceiverService _service;
         private readonly IMapper _mapper;
+        private readonly ILogger _logger;
 
         public FeedbackReceiversController(IFeedbackReceiverService service, IMapper mapper,
-            IOptions<ApiBehaviorOptions> apiBehaviorOptions)
+            IOptions<ApiBehaviorOptions> apiBehaviorOptions, ILogger<FeedbackReceiversController> logger)
         {
             _service = service;
             _mapper = mapper;
             _apiBehaviorOptions = apiBehaviorOptions;
+            _logger = logger;
         }
 
 
@@ -80,7 +83,7 @@ namespace Retroactiune.Controllers
             [StringLength(24, ErrorMessage = "invalid guid, must be 24 characters", MinimumLength = 24)]
             string guid)
         {
-            await _service.DeleteManyAsync(new [] {guid});
+            await _service.DeleteManyAsync(new[] {guid});
             return NoContent();
         }
 
@@ -133,7 +136,7 @@ namespace Retroactiune.Controllers
         {
             return Ok(await _service.FindAsync(filter, offset, limit));
         }
-        
+
         /// <summary>
         /// Deletes FeedbackReceiver identified by ids.
         /// </summary>
@@ -143,7 +146,7 @@ namespace Retroactiune.Controllers
         /// <returns></returns>
         [HttpDelete]
         [ProducesResponseType(typeof(NoContentResult), StatusCodes.Status204NoContent)]
-        [ProducesResponseType(typeof(BasicResponse),StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(BasicResponse), StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> DeleteMany([Required] IEnumerable<string> ids)
         {
             try
@@ -153,6 +156,7 @@ namespace Retroactiune.Controllers
             }
             catch (GenericServiceException e)
             {
+                _logger.LogError("{Message}", e.Message);
                 return BadRequest(new BasicResponse
                 {
                     Message = e.Message

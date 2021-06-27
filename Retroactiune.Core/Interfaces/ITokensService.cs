@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Retroactiune.Core.Entities;
+using Retroactiune.Core.Services;
 
 namespace Retroactiune.Core.Interfaces
 {
@@ -22,5 +24,12 @@ namespace Retroactiune.Core.Interfaces
         /// <param name="tokenIds">A list of tokens to delete.</param>
         /// <returns>The result of the delete operation.</returns>
         public Task DeleteTokens(IEnumerable<string> tokenIds);
+
+        /// <summary>
+        /// List and filters tokens.
+        /// </summary>
+        /// <param name="filters">Filters object for filtering results.</param>
+        /// <returns>A list of tokens matching the filters.</returns>
+        public Task<IEnumerable<Token>> ListTokens(TokenListFilters filters);
     }
 }

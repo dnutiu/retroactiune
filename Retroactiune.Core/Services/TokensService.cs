@@ -52,5 +52,12 @@ namespace Retroactiune.Core.Services
                 throw new GenericServiceException($"Operation failed: {e.Message} {e.StackTrace}");
             }
         }
+
+        public async Task<IEnumerable<Token>> ListTokens(TokenListFilters filters)
+        {
+            // TODO Write unit tests.
+            // TODO: Implement
+            throw new NotImplementedException();
+        }
     }
 }

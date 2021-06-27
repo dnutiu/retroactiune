@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using AutoFixture.Xunit2;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using Moq;
 using Retroactiune.Controllers;
 using Retroactiune.Core.Entities;
@@ -19,10 +20,12 @@ namespace Retroactiune.Tests.Retroactiune.WebAPI.Controllers
         {
             // Arrange
             var feedbackService = new Mock<IFeedbackReceiverService>();
+            var mapper = TestUtils.GetMapper();
             var tokens = new Mock<ITokensService>();
+            var logger = new Mock<ILogger<TokensController>>();
 
             // Test
-            var controller = new TokensController(feedbackService.Object, tokens.Object);
+            var controller = new TokensController(feedbackService.Object, tokens.Object, logger.Object, mapper);
             var result = await controller.GenerateTokens(new GenerateTokensDto());
 
             // Assert
@@ -33,8 +36,10 @@ namespace Retroactiune.Tests.Retroactiune.WebAPI.Controllers
         public async Task Test_GenerateTokens_Success(FeedbackReceiver randFedFeedbackReceiver)
         {
             // Arrange
+            var mapper = TestUtils.GetMapper();
             var feedbackService = new Mock<IFeedbackReceiverService>();
             var tokens = new Mock<ITokensService>();
+            var logger = new Mock<ILogger<TokensController>>();
 
             feedbackService.Setup(i => i.FindAsync(It.IsAny<IEnumerable<string>>(),
                     It.IsAny<int?>(),
@@ -42,7 +47,7 @@ namespace Retroactiune.Tests.Retroactiune.WebAPI.Controllers
                 .ReturnsAsync(new[] {randFedFeedbackReceiver});
 
             // Test
-            var controller = new TokensController(feedbackService.Object, tokens.Object);
+            var controller = new TokensController(feedbackService.Object, tokens.Object, logger.Object, mapper);
             var result = await controller.GenerateTokens(new GenerateTokensDto
             {
                 NumberOfTokens = 2,
@@ -58,11 +63,13 @@ namespace Retroactiune.Tests.Retroactiune.WebAPI.Controllers
         public async Task Test_Delete_Ok()
         {
             // Arrange
+            var mapper = TestUtils.GetMapper();
             var feedbackService = new Mock<IFeedbackReceiverService>();
             var tokens = new Mock<ITokensService>();
+            var logger = new Mock<ILogger<TokensController>>();
 
             // Test
-            var controller = new TokensController(feedbackService.Object, tokens.Object);
+            var controller = new TokensController(feedbackService.Object, tokens.Object, logger.Object, mapper);
             var result = await controller.DeleteToken("my_guid");
 
             // Assert
@@ -74,13 +81,15 @@ namespace Retroactiune.Tests.Retroactiune.WebAPI.Controllers
         public async Task Test_Delete_BadRequest()
         {
             // Arrange
+            var mapper = TestUtils.GetMapper();
             var feedbackService = new Mock<IFeedbackReceiverService>();
             var tokens = new Mock<ITokensService>();
+            var logger = new Mock<ILogger<TokensController>>();
             tokens.Setup(i => i.DeleteTokens(It.IsAny<IEnumerable<string>>()))
                 .Throws(new GenericServiceException("op fail"));
 
             // Test
-            var controller = new TokensController(feedbackService.Object, tokens.Object);
+            var controller = new TokensController(feedbackService.Object, tokens.Object, logger.Object, mapper);
             var result = await controller.DeleteToken("my_guid");
 
             // Assert
@@ -92,11 +101,13 @@ namespace Retroactiune.Tests.Retroactiune.WebAPI.Controllers
         public async Task Test_DeleteMany_Ok()
         {
             // Arrange
+            var mapper = TestUtils.GetMapper();
             var feedbackService = new Mock<IFeedbackReceiverService>();
             var tokens = new Mock<ITokensService>();
+            var logger = new Mock<ILogger<TokensController>>();
 
             // Test
-            var controller = new TokensController(feedbackService.Object, tokens.Object);
+            var controller = new TokensController(feedbackService.Object, tokens.Object, logger.Object, mapper);
             var result = await controller.DeleteTokens(new[] {"my_guid", "b"});
 
             // Assert
@@ -108,13 +119,15 @@ namespace Retroactiune.Tests.Retroactiune.WebAPI.Controllers
         public async Task Test_DeleteMany_BadRequest()
         {
             // Arrange
+            var mapper = TestUtils.GetMapper();
             var feedbackService = new Mock<IFeedbackReceiverService>();
             var tokens = new Mock<ITokensService>();
+            var logger = new Mock<ILogger<TokensController>>();
             tokens.Setup(i => i.DeleteTokens(It.IsAny<IEnumerable<string>>()))
                 .Throws(new GenericServiceException("op fail"));
 
             // Test
-            var controller = new TokensController(feedbackService.Object, tokens.Object);
+            var controller = new TokensController(feedbackService.Object, tokens.Object, logger.Object, mapper);
             var result = await controller.DeleteTokens(new[] {"my_guid", "b"});
 
             // Assert
