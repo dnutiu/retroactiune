@@ -11,7 +11,7 @@ namespace Retroactiune.Core.Services
         /// <summary>
         /// Id filters tokens by their ids.
         /// </summary>
-        public IEnumerable<string> Id { get; set; }
+        public IEnumerable<string> Ids { get; set; }
 
         /// <summary>
         /// FeedbackReceiverId filters tokens by their assigned FeedbackReceiverId.

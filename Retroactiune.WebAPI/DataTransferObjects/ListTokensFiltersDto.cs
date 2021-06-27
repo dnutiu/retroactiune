@@ -10,7 +10,7 @@ namespace Retroactiune.DataTransferObjects
     /// </summary>
     public class ListTokensFiltersDto
     {
-        public IEnumerable<string> Id { get; set; }
+        public IEnumerable<string> Ids { get; set; }
         [StringLength(24, ErrorMessage = "invalid guid, must be 24 characters", MinimumLength = 24)]
         public string FeedbackReceiverId { get; set; }
         public DateTime? CreatedAfter { get; set; }

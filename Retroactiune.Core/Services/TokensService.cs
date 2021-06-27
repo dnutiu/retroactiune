@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using MongoDB.Driver;
 using Retroactiune.Core.Entities;
@@ -56,8 +57,55 @@ namespace Retroactiune.Core.Services
         public async Task<IEnumerable<Token>> ListTokens(TokenListFilters filters)
         {
             // TODO Write unit tests.
-            // TODO: Implement
-            throw new NotImplementedException();
+            var filterBuilder = new FilterDefinitionBuilder<Token>();
+            var activeFilters = new List<FilterDefinition<Token>>();
+            var tokensListFilter = FilterDefinition<Token>.Empty;
+
+            // Filter by token ids.
+            if (filters.Ids.Any())
+            {
+                activeFilters.Add(filterBuilder.In(i => i.Id, filters.Ids));
+            }
+
+            // Filter tokens by their assigned feedback receiver id.
+            if (filters.FeedbackReceiverId != null)
+            {
+                activeFilters.Add(filterBuilder.Eq(i => i.FeedbackReceiverId, filters.FeedbackReceiverId));
+            }
+
+            // Datetime after
+            if (filters.CreatedAfter != null)
+            {
+                activeFilters.Add(filterBuilder.Gte(i => i.CreatedAt, filters.CreatedAfter));
+            }
+
+            // Datetime before
+            if (filters.CreatedBefore != null)
+            {
+                activeFilters.Add(filterBuilder.Lte(i => i.CreatedAt, filters.CreatedBefore));
+            }
+
+            // Used time after
+            if (filters.UsedAfter != null)
+            {
+                activeFilters.Add(filterBuilder.Gte(i => i.TimeUsed, filters.UsedAfter));
+            }
+
+            // Used time before
+            if (filters.UsedBefore != null)
+            {
+                activeFilters.Add(filterBuilder.Lte(i => i.TimeUsed, filters.UsedBefore));
+            }
+
+
+            // Construct the final filter.
+            if (activeFilters.Any())
+            {
+                tokensListFilter = filterBuilder.And(activeFilters);
+            }
+
+            var results = await _collection.FindAsync(tokensListFilter);
+            return await results.ToListAsync();
         }
     }
 }
