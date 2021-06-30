@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Runtime.CompilerServices;
 using System.Text.Json.Serialization;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
@@ -33,7 +34,7 @@ namespace Retroactiune.Core.Entities
 
         public override int GetHashCode()
         {
-            return base.GetHashCode();
+            return RuntimeHelpers.GetHashCode(this);
         }
     }
 }

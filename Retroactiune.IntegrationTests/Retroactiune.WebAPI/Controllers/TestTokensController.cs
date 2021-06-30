@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -7,6 +8,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using AutoFixture.Xunit2;
+using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using MongoDB.Bson;
@@ -16,16 +18,17 @@ using Retroactiune.Core.Entities;
 using Retroactiune.Infrastructure;
 using Retroactiune.IntegrationTests.Retroactiune.WebAPI.Fixtures;
 using Xunit;
+using JsonSerializer = System.Text.Json.JsonSerializer;
 
 namespace Retroactiune.IntegrationTests.Retroactiune.WebAPI.Controllers
 {
     [Collection("IntegrationTests")]
-    public class TestTokens : IClassFixture<WebApiTestingFactory>
+    public class TestTokensController : IClassFixture<WebApiTestingFactory>
     {
         private readonly MongoDbFixture _mongoDb;
         private readonly HttpClient _client;
 
-        public TestTokens(WebApiTestingFactory factory)
+        public TestTokensController(WebApiTestingFactory factory)
         {
             _client = factory.CreateClient();
             var dbSettings = factory.Services.GetService<IOptions<DatabaseSettings>>();
@@ -206,6 +209,169 @@ namespace Retroactiune.IntegrationTests.Retroactiune.WebAPI.Controllers
 
             // Assert
             Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+        }
+
+        [Fact]
+        public async Task Test_ListTokens_NoFilter_Empty()
+        {
+            // Setup
+            await _mongoDb.DropAsync();
+
+            // Test
+            var response = await _client.GetAsync("api/v1/Tokens");
+            var items = JsonSerializer.Deserialize<List<Token>>(await response.Content.ReadAsStringAsync());
+
+            // Assert
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            Assert.Empty(items);
+        }
+
+        [Fact]
+        public async Task Test_ListTokens_NoFilter()
+        {
+            // Setup
+            await _mongoDb.DropAsync();
+            var timeNow = DateTime.UtcNow;
+            var tokens = TokensFixture.Generate(10, timeNow);
+            await _mongoDb.TokensCollection.InsertManyAsync(tokens);
+
+            // Test
+            var response = await _client.GetAsync("api/v1/Tokens");
+            var items = JsonSerializer.Deserialize<List<Token>>(await response.Content.ReadAsStringAsync());
+
+            // Assert
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            Assert.Equal(tokens.Count, items.Count);
+            for (var i = 0; i < tokens.Count; i++)
+            {
+                Assert.Equal(tokens[i], items[i]);
+            }
+        }
+
+        [Fact]
+        public async Task Test_ListTokens_Filter_FeedbackReceiverId()
+        {
+            // Setup
+            await _mongoDb.DropAsync();
+
+            var timeNow = DateTime.UtcNow;
+            var tokens = TokensFixture.Generate(13, timeNow);
+            var expectedTokens = TokensFixture.Generate(1, timeNow);
+
+            var qb = new QueryBuilder
+            {
+                {"FeedbackReceiverId", expectedTokens[0].FeedbackReceiverId},
+            };
+
+            await _mongoDb.TokensCollection.InsertManyAsync(tokens);
+            await _mongoDb.TokensCollection.InsertManyAsync(expectedTokens);
+
+            // Test
+            var response = await _client.GetAsync($"api/v1/Tokens{qb}");
+            var items = JsonSerializer.Deserialize<List<Token>>(await response.Content.ReadAsStringAsync());
+
+            // Assert
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            Assert.Single(items);
+            Assert.Equal(expectedTokens[0], items[0]);
+        }
+        
+        [Fact]
+        public async Task Test_ListTokens_Filter_Ids()
+        {
+            // Setup
+            await _mongoDb.DropAsync();
+
+            var timeNow = DateTime.UtcNow;
+            var tokens = TokensFixture.Generate(13, timeNow);
+            var expectedTokens = TokensFixture.Generate(1, timeNow);
+
+            var qb = new QueryBuilder
+            {
+                {"Ids", expectedTokens[0].Id},
+            };
+
+            await _mongoDb.TokensCollection.InsertManyAsync(tokens);
+            await _mongoDb.TokensCollection.InsertManyAsync(expectedTokens);
+
+            // Test
+            var response = await _client.GetAsync($"api/v1/Tokens{qb}");
+            var items = JsonSerializer.Deserialize<List<Token>>(await response.Content.ReadAsStringAsync());
+
+            // Assert
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            Assert.Single(items);
+            Assert.Equal(expectedTokens[0], items[0]);
+        }
+        
+        [Fact]
+        public async Task Test_ListTokens_Filter_CreatedRange()
+        {
+            // Setup
+            await _mongoDb.DropAsync();
+
+            var timeNow = DateTime.UtcNow;
+
+            var oldTokens = TokensFixture.Generate(13, timeNow.AddDays(-10));
+            var futureTokens = TokensFixture.Generate(13, timeNow.AddDays(10));
+            var expectedTokens = TokensFixture.Generate(5, timeNow);
+
+            var qb = new QueryBuilder
+            {
+                {"CreatedAfter", timeNow.AddDays(-3).ToString(CultureInfo.InvariantCulture)},
+                {"CreatedBefore", timeNow.AddDays(3).ToString(CultureInfo.InvariantCulture)},
+            };
+
+            await _mongoDb.TokensCollection.InsertManyAsync(oldTokens);
+            await _mongoDb.TokensCollection.InsertManyAsync(expectedTokens);
+            await _mongoDb.TokensCollection.InsertManyAsync(futureTokens);
+
+            // Test
+            var response = await _client.GetAsync($"api/v1/Tokens{qb}");
+            var items = JsonSerializer.Deserialize<List<Token>>(await response.Content.ReadAsStringAsync());
+
+            // Assert
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            Assert.Equal(expectedTokens.Count, items.Count);
+            for (var i = 0; i < items.Count; i++)
+            {
+                Assert.Equal(expectedTokens[i], items[i]);
+            }
+        }
+
+        [Fact]
+        public async Task Test_ListTokens_Filter_UsedRange()
+        {
+            // Setup
+            await _mongoDb.DropAsync();
+
+            var timeNow = DateTime.UtcNow;
+
+            var oldTokens = TokensFixture.Generate(13, timeNow.AddDays(-10));
+            var futureTokens = TokensFixture.Generate(13, timeNow.AddDays(10));
+            var expectedTokens = TokensFixture.Generate(5, timeNow, null, null, timeNow);
+
+            var qb = new QueryBuilder
+            {
+                {"UsedAfter", timeNow.AddDays(-3).ToString(CultureInfo.InvariantCulture)},
+                {"UsedBefore", timeNow.AddDays(3).ToString(CultureInfo.InvariantCulture)},
+            };
+
+            await _mongoDb.TokensCollection.InsertManyAsync(oldTokens);
+            await _mongoDb.TokensCollection.InsertManyAsync(expectedTokens);
+            await _mongoDb.TokensCollection.InsertManyAsync(futureTokens);
+
+            // Test
+            var response = await _client.GetAsync($"api/v1/Tokens{qb}");
+            var items = JsonSerializer.Deserialize<List<Token>>(await response.Content.ReadAsStringAsync());
+
+            // Assert
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            Assert.Equal(expectedTokens.Count, items.Count);
+            for (var i = 0; i < items.Count; i++)
+            {
+                Assert.Equal(expectedTokens[i], items[i]);
+            }
         }
     }
 }

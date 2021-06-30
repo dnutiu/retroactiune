@@ -24,12 +24,12 @@ using JsonSerializer = System.Text.Json.JsonSerializer;
 namespace Retroactiune.IntegrationTests.Retroactiune.WebAPI.Controllers
 {
     [Collection("IntegrationTests")]
-    public class TestFeedbackReceiver : IClassFixture<WebApiTestingFactory>
+    public class TestFeedbackReceiversController : IClassFixture<WebApiTestingFactory>
     {
         private readonly MongoDbFixture _mongoDb;
         private readonly HttpClient _client;
 
-        public TestFeedbackReceiver(WebApiTestingFactory factory)
+        public TestFeedbackReceiversController(WebApiTestingFactory factory)
         {
             _client = factory.CreateClient();
             var dbSettings = factory.Services.GetService<IOptions<DatabaseSettings>>();

@@ -8,6 +8,7 @@ using Moq;
 using Retroactiune.Controllers;
 using Retroactiune.Core.Entities;
 using Retroactiune.Core.Interfaces;
+using Retroactiune.Core.Services;
 using Retroactiune.DataTransferObjects;
 using Xunit;
 
@@ -82,6 +83,27 @@ namespace Retroactiune.Tests.Retroactiune.WebAPI.Controllers
 
             // Assert
             Assert.IsType<NoContentResult>(result);
+            mockService.Verify(s => s.DeleteManyAsync(items),
+                Times.Once);
+        }
+
+        [Fact]
+        public async Task DeleteMany_BadRequest()
+        {
+            // Arrange
+            var mapper = TestUtils.GetMapper();
+            var mockService = new Mock<IFeedbackReceiverService>();
+            var logger = new Mock<ILogger<FeedbackReceiversController>>();
+            mockService.Setup(i => i.DeleteManyAsync(It.IsAny<IEnumerable<string>>()))
+                .ThrowsAsync(new GenericServiceException("op failed"));
+
+            // Test
+            var controller = new FeedbackReceiversController(mockService.Object, mapper, null, logger.Object);
+            var items = new[] {"bad_guid_but_unit_test_works_cause_validation_doesnt", "2", "3"};
+            var result = await controller.DeleteMany(items);
+
+            // Assert
+            Assert.IsType<BadRequestObjectResult>(result);
             mockService.Verify(s => s.DeleteManyAsync(items),
                 Times.Once);
         }

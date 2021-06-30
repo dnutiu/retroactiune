@@ -42,7 +42,6 @@ namespace Retroactiune.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> ListTokens([FromQuery] ListTokensFiltersDto filtersDto)
         {
-            // TODO: Write unit & integration tests.
             try
             {
                 var tokenFilters = _mapper.Map<TokenListFilters>(filtersDto);

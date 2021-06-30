@@ -134,5 +134,43 @@ namespace Retroactiune.Tests.Retroactiune.WebAPI.Controllers
             Assert.IsType<BadRequestObjectResult>(result);
             tokens.Verify(i => i.DeleteTokens(new[] {"my_guid", "b"}), Times.Once);
         }
+
+        [Fact]
+        public async Task Test_ListTokens_Ok()
+        {
+            // Arrange
+            var mapper = TestUtils.GetMapper();
+            var feedbackService = new Mock<IFeedbackReceiverService>();
+            var tokens = new Mock<ITokensService>();
+            var logger = new Mock<ILogger<TokensController>>();
+
+            // Test
+            var controller = new TokensController(feedbackService.Object, tokens.Object, logger.Object, mapper);
+            var result = await controller.ListTokens(null);
+            
+            // Assert
+            Assert.IsType<OkObjectResult>(result);
+            tokens.Verify(i => i.ListTokens(It.IsAny<TokenListFilters>()), Times.Once);
+        }
+        
+        [Fact]
+        public async Task Test_ListTokens_BadRequest()
+        {
+            // Arrange
+            var mapper = TestUtils.GetMapper();
+            var feedbackService = new Mock<IFeedbackReceiverService>();
+            var tokens = new Mock<ITokensService>();
+            var logger = new Mock<ILogger<TokensController>>();
+            tokens.Setup(i => i.ListTokens(It.IsAny<TokenListFilters>()))
+                .Throws(new GenericServiceException("op fail"));
+
+            // Test
+            var controller = new TokensController(feedbackService.Object, tokens.Object, logger.Object, mapper);
+            var result = await controller.ListTokens(null);
+            
+            // Assert
+            Assert.IsType<BadRequestObjectResult>(result);
+            tokens.Verify(i => i.ListTokens(It.IsAny<TokenListFilters>()), Times.Once);
+        }
     }
 }

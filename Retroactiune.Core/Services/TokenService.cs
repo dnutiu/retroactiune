@@ -56,13 +56,12 @@ namespace Retroactiune.Core.Services
 
         public async Task<IEnumerable<Token>> ListTokens(TokenListFilters filters)
         {
-            // TODO Write unit tests.
             var filterBuilder = new FilterDefinitionBuilder<Token>();
             var activeFilters = new List<FilterDefinition<Token>>();
             var tokensListFilter = FilterDefinition<Token>.Empty;
 
             // Filter by token ids.
-            if (filters.Ids.Any())
+            if (filters.Ids != null && filters.Ids.Any())
             {
                 activeFilters.Add(filterBuilder.In(i => i.Id, filters.Ids));
             }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Runtime.CompilerServices;
 using System.Text.Json.Serialization;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
@@ -30,14 +31,15 @@ namespace Retroactiune.Core.Entities
             {
                 return false;
             }
-            
-            return string.Equals(Id, convertedObj.Id) && string.Equals(FeedbackReceiverId, convertedObj.FeedbackReceiverId) &&
-                   TimeUsed == convertedObj.TimeUsed && ExpiryTime == convertedObj.ExpiryTime;
+
+            return string.Equals(Id, convertedObj.Id) &&
+                   string.Equals(FeedbackReceiverId, convertedObj.FeedbackReceiverId) &&
+                   (CreatedAt - convertedObj.CreatedAt).Milliseconds == 0;
         }
 
         public override int GetHashCode()
         {
-            return base.GetHashCode();
+            return RuntimeHelpers.GetHashCode(this);
         }
     }
 }
