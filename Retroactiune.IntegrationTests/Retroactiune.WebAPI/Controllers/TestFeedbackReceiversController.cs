@@ -124,13 +124,10 @@ namespace Retroactiune.IntegrationTests.Retroactiune.WebAPI.Controllers
             // Arrange
             await _mongoDb.DropAsync();
             var guids = new List<string>();
-            byte index = 0;
             var feedbackReceivers = items as FeedbackReceiver[] ?? items.ToArray();
             foreach (var i in feedbackReceivers)
             {
-                i.Id = new BsonObjectId(new ObjectId(new byte[] {1, 2, index, 4, 5, 6, 7, 8, 9, index, 11, 14}))
-                    .ToString();
-                index += 1;
+                i.Id = ObjectId.GenerateNewId().ToString();
                 guids.Add(i.Id);
             }
 
@@ -151,19 +148,49 @@ namespace Retroactiune.IntegrationTests.Retroactiune.WebAPI.Controllers
             Assert.Equal(0L, docs);
         }
 
+        [Fact]
+        public async Task Test_Delete_OK_With_Tokens()
+        {
+            // Arrange
+            await _mongoDb.DropAsync();
+            var feedbackReceiver = new FeedbackReceiver
+            {
+                Id = ObjectId.GenerateNewId().ToString(),
+                Description = "blam",
+                CreatedAt = DateTime.UtcNow,
+                Name = "test"
+            };
+            await _mongoDb.FeedbackReceiverCollection.InsertOneAsync(feedbackReceiver);
+
+
+            // Test
+            var httpResponse = await _client.DeleteAsync($"/api/v1/FeedbackReceivers/{feedbackReceiver.Id}",
+                CancellationToken.None);
+            await _client.PostAsync("/api/v1/Tokens/",
+                new StringContent($"{{\"numberOfTokens\": 100, \"feedbackReceiverId\": \"{feedbackReceiver.Id}\"}}",
+                    Encoding.UTF8,
+                    "application/json"));
+
+
+            // Assert
+            Assert.Equal(HttpStatusCode.NoContent, httpResponse.StatusCode);
+            var feedbackReceivers =
+                await _mongoDb.FeedbackReceiverCollection.CountDocumentsAsync(FilterDefinition<FeedbackReceiver>.Empty);
+            var tokens = await _mongoDb.TokensCollection.CountDocumentsAsync(FilterDefinition<Token>.Empty);
+            Assert.Equal(0L, feedbackReceivers);
+            Assert.Equal(0L, tokens);
+        }
+
         [Theory, AutoData]
         public async Task Test_DeleteMany_OK(IEnumerable<FeedbackReceiver> items)
         {
             // Arrange
             await _mongoDb.DropAsync();
             var guids = new List<string>();
-            byte index = 0;
             var feedbackReceivers = items as FeedbackReceiver[] ?? items.ToArray();
             foreach (var i in feedbackReceivers)
             {
-                i.Id = new BsonObjectId(new ObjectId(new byte[] {1, 2, index, 4, 5, 6, 7, 8, 9, index, 11, 14}))
-                    .ToString();
-                index += 1;
+                i.Id = ObjectId.GenerateNewId().ToString();
                 guids.Add(i.Id);
             }
 
@@ -194,7 +221,7 @@ namespace Retroactiune.IntegrationTests.Retroactiune.WebAPI.Controllers
             await _mongoDb.DropAsync();
             var feedbackReceiver = new FeedbackReceiver
             {
-                Id = new BsonObjectId(new ObjectId(new byte[] {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 14})).ToString(),
+                Id = ObjectId.GenerateNewId().ToString(),
                 Name = "N4m3",
                 Description = "something",
                 CreatedAt = DateTime.UnixEpoch
@@ -248,21 +275,21 @@ namespace Retroactiune.IntegrationTests.Retroactiune.WebAPI.Controllers
             {
                 new FeedbackReceiver
                 {
-                    Id = new BsonObjectId(new ObjectId(new byte[] {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 14})).ToString(),
+                    Id = ObjectId.GenerateNewId().ToString(),
                     Name = "N4m3",
                     Description = "something",
                     CreatedAt = DateTime.UnixEpoch
                 },
                 new FeedbackReceiver
                 {
-                    Id = new BsonObjectId(new ObjectId(new byte[] {2, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 14})).ToString(),
+                    Id = ObjectId.GenerateNewId().ToString(),
                     Name = "N4m3_Two",
                     Description = "something",
                     CreatedAt = DateTime.UnixEpoch
                 },
                 new FeedbackReceiver
                 {
-                    Id = new BsonObjectId(new ObjectId(new byte[] {3, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 14})).ToString(),
+                    Id = ObjectId.GenerateNewId().ToString(),
                     Name = "N4m3_Three",
                     Description = "something",
                     CreatedAt = DateTime.UnixEpoch
@@ -294,21 +321,21 @@ namespace Retroactiune.IntegrationTests.Retroactiune.WebAPI.Controllers
             {
                 new FeedbackReceiver
                 {
-                    Id = new BsonObjectId(new ObjectId(new byte[] {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 14})).ToString(),
+                    Id = ObjectId.GenerateNewId().ToString(),
                     Name = "N4m3",
                     Description = "something",
                     CreatedAt = DateTime.UnixEpoch
                 },
                 new FeedbackReceiver
                 {
-                    Id = new BsonObjectId(new ObjectId(new byte[] {2, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 14})).ToString(),
+                    Id = ObjectId.GenerateNewId().ToString(),
                     Name = "N4m3_Two",
                     Description = "something",
                     CreatedAt = DateTime.UnixEpoch
                 },
                 new FeedbackReceiver
                 {
-                    Id = new BsonObjectId(new ObjectId(new byte[] {3, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 14})).ToString(),
+                    Id = ObjectId.GenerateNewId().ToString(),
                     Name = "N4m3_Three",
                     Description = "something",
                     CreatedAt = DateTime.UnixEpoch
@@ -344,21 +371,21 @@ namespace Retroactiune.IntegrationTests.Retroactiune.WebAPI.Controllers
             {
                 new FeedbackReceiver
                 {
-                    Id = new BsonObjectId(new ObjectId(new byte[] {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 14})).ToString(),
+                    Id = ObjectId.GenerateNewId().ToString(),
                     Name = "N4m3",
                     Description = "something",
                     CreatedAt = DateTime.UnixEpoch
                 },
                 new FeedbackReceiver
                 {
-                    Id = new BsonObjectId(new ObjectId(new byte[] {2, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 14})).ToString(),
+                    Id = ObjectId.GenerateNewId().ToString(),
                     Name = "N4m3_Two",
                     Description = "something",
                     CreatedAt = DateTime.UnixEpoch
                 },
                 new FeedbackReceiver
                 {
-                    Id = new BsonObjectId(new ObjectId(new byte[] {3, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 14})).ToString(),
+                    Id = ObjectId.GenerateNewId().ToString(),
                     Name = "N4m3_Three",
                     Description = "something",
                     CreatedAt = DateTime.UnixEpoch

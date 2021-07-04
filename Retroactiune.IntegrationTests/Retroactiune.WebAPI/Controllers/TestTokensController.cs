@@ -116,13 +116,10 @@ namespace Retroactiune.IntegrationTests.Retroactiune.WebAPI.Controllers
             await _mongoDb.DropAsync();
             var guids = new List<string>();
             var tokensArr = tokens as Token[] ?? tokens.ToArray();
-            byte index = 0;
             foreach (var i in tokensArr)
             {
-                i.Id = new BsonObjectId(new ObjectId(new byte[] {1, 2, index, 4, 5, 6, 7, 8, 9, index, 11, 14}))
-                    .ToString();
-                i.FeedbackReceiverId = i.Id;
-                index += 1;
+                i.Id = ObjectId.GenerateNewId().ToString();
+                i.FeedbackReceiverId = ObjectId.GenerateNewId().ToString();
                 guids.Add(i.Id);
             }
 
@@ -161,13 +158,10 @@ namespace Retroactiune.IntegrationTests.Retroactiune.WebAPI.Controllers
             await _mongoDb.DropAsync();
             var guids = new List<string>();
             var tokensArr = tokens as Token[] ?? tokens.ToArray();
-            byte index = 0;
             foreach (var i in tokensArr)
             {
-                i.Id = new BsonObjectId(new ObjectId(new byte[] {1, 2, index, 4, 5, 6, 7, 8, 9, index, 11, 14}))
-                    .ToString();
-                i.FeedbackReceiverId = i.Id;
-                index += 1;
+                i.Id = ObjectId.GenerateNewId().ToString();
+                i.FeedbackReceiverId = ObjectId.GenerateNewId().ToString();
                 guids.Add(i.Id);
             }
 
@@ -275,7 +269,7 @@ namespace Retroactiune.IntegrationTests.Retroactiune.WebAPI.Controllers
             Assert.Single(items);
             Assert.Equal(expectedTokens[0], items[0]);
         }
-        
+
         [Fact]
         public async Task Test_ListTokens_Filter_Ids()
         {
@@ -303,7 +297,7 @@ namespace Retroactiune.IntegrationTests.Retroactiune.WebAPI.Controllers
             Assert.Single(items);
             Assert.Equal(expectedTokens[0], items[0]);
         }
-        
+
         [Fact]
         public async Task Test_ListTokens_Filter_CreatedRange()
         {

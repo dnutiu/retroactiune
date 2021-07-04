@@ -31,5 +31,12 @@ namespace Retroactiune.Core.Interfaces
         /// <param name="filters">Filters object for filtering results.</param>
         /// <returns>A list of tokens matching the filters.</returns>
         public Task<IEnumerable<Token>> ListTokens(TokenListFilters filters);
+
+        /// <summary>
+        /// Deletes tokens, by their associated FeedbackReceiverId.
+        /// </summary>
+        /// <param name="feedbackReceiverIds">A list of FeedbackReceiverIDs.</param>
+        /// <returns>The result of the delete operation.</returns>
+        public Task DeleteManyByFeedbackReceiverIdAsync(IEnumerable<string> feedbackReceiverIds);
     }
 }

@@ -8,11 +8,11 @@ using Retroactiune.Core.Interfaces;
 
 namespace Retroactiune.Core.Services
 {
-    public class TokenService : ITokensService
+    public class TokensService : ITokensService
     {
         private readonly IMongoCollection<Token> _collection;
 
-        public TokenService(IMongoClient client, IDatabaseSettings settings)
+        public TokensService(IMongoClient client, IDatabaseSettings settings)
         {
             var database = client.GetDatabase(settings.DatabaseName);
             _collection = database.GetCollection<Token>(settings.TokensCollectionName);
@@ -105,6 +105,19 @@ namespace Retroactiune.Core.Services
 
             var results = await _collection.FindAsync(tokensListFilter);
             return await results.ToListAsync();
+        }
+
+        public async Task DeleteManyByFeedbackReceiverIdAsync(IEnumerable<string> feedbackReceiverIds)
+        {
+            try
+            {
+                var filter = new FilterDefinitionBuilder<Token>();
+                await _collection.DeleteManyAsync(filter.In(i => i.FeedbackReceiverId, feedbackReceiverIds));
+            }
+            catch (Exception e)
+            {
+                throw new GenericServiceException($"Operation failed: {e.Message} {e.StackTrace}");
+            }
         }
     }
 }
