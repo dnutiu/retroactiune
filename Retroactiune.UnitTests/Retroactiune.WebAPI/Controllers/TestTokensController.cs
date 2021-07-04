@@ -19,7 +19,7 @@ namespace Retroactiune.Tests.Retroactiune.WebAPI.Controllers
         public async Task Test_GenerateTokens_InexistentFeedbackReceiver()
         {
             // Arrange
-            var feedbackService = new Mock<IFeedbackReceiverService>();
+            var feedbackService = new Mock<IFeedbackReceiversService>();
             var mapper = TestUtils.GetMapper();
             var tokens = new Mock<ITokensService>();
             var logger = new Mock<ILogger<TokensController>>();
@@ -37,7 +37,7 @@ namespace Retroactiune.Tests.Retroactiune.WebAPI.Controllers
         {
             // Arrange
             var mapper = TestUtils.GetMapper();
-            var feedbackService = new Mock<IFeedbackReceiverService>();
+            var feedbackService = new Mock<IFeedbackReceiversService>();
             var tokens = new Mock<ITokensService>();
             var logger = new Mock<ILogger<TokensController>>();
 
@@ -64,7 +64,7 @@ namespace Retroactiune.Tests.Retroactiune.WebAPI.Controllers
         {
             // Arrange
             var mapper = TestUtils.GetMapper();
-            var feedbackService = new Mock<IFeedbackReceiverService>();
+            var feedbackService = new Mock<IFeedbackReceiversService>();
             var tokens = new Mock<ITokensService>();
             var logger = new Mock<ILogger<TokensController>>();
 
@@ -82,7 +82,7 @@ namespace Retroactiune.Tests.Retroactiune.WebAPI.Controllers
         {
             // Arrange
             var mapper = TestUtils.GetMapper();
-            var feedbackService = new Mock<IFeedbackReceiverService>();
+            var feedbackService = new Mock<IFeedbackReceiversService>();
             var tokens = new Mock<ITokensService>();
             var logger = new Mock<ILogger<TokensController>>();
             tokens.Setup(i => i.DeleteTokens(It.IsAny<IEnumerable<string>>()))
@@ -102,7 +102,7 @@ namespace Retroactiune.Tests.Retroactiune.WebAPI.Controllers
         {
             // Arrange
             var mapper = TestUtils.GetMapper();
-            var feedbackService = new Mock<IFeedbackReceiverService>();
+            var feedbackService = new Mock<IFeedbackReceiversService>();
             var tokens = new Mock<ITokensService>();
             var logger = new Mock<ILogger<TokensController>>();
 
@@ -120,7 +120,7 @@ namespace Retroactiune.Tests.Retroactiune.WebAPI.Controllers
         {
             // Arrange
             var mapper = TestUtils.GetMapper();
-            var feedbackService = new Mock<IFeedbackReceiverService>();
+            var feedbackService = new Mock<IFeedbackReceiversService>();
             var tokens = new Mock<ITokensService>();
             var logger = new Mock<ILogger<TokensController>>();
             tokens.Setup(i => i.DeleteTokens(It.IsAny<IEnumerable<string>>()))
@@ -140,7 +140,7 @@ namespace Retroactiune.Tests.Retroactiune.WebAPI.Controllers
         {
             // Arrange
             var mapper = TestUtils.GetMapper();
-            var feedbackService = new Mock<IFeedbackReceiverService>();
+            var feedbackService = new Mock<IFeedbackReceiversService>();
             var tokens = new Mock<ITokensService>();
             var logger = new Mock<ILogger<TokensController>>();
 
@@ -158,7 +158,7 @@ namespace Retroactiune.Tests.Retroactiune.WebAPI.Controllers
         {
             // Arrange
             var mapper = TestUtils.GetMapper();
-            var feedbackService = new Mock<IFeedbackReceiverService>();
+            var feedbackService = new Mock<IFeedbackReceiversService>();
             var tokens = new Mock<ITokensService>();
             var logger = new Mock<ILogger<TokensController>>();
             tokens.Setup(i => i.ListTokens(It.IsAny<TokenListFilters>()))

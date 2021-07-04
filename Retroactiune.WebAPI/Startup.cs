@@ -38,7 +38,7 @@ namespace Retroactiune
 
 
             // Services
-            services.AddSingleton<IFeedbackReceiverService, FeedbackReceiverService>();
+            services.AddSingleton<IFeedbackReceiversService, FeedbackReceiversService>();
             services.AddSingleton<ITokensService, TokensService>();
             services.AddSingleton<IMongoClient, MongoClient>(i =>
             {

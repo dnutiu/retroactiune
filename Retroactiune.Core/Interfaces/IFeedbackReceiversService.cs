@@ -4,7 +4,7 @@ using Retroactiune.Core.Entities;
 
 namespace Retroactiune.Core.Interfaces
 {
-    public interface IFeedbackReceiverService
+    public interface IFeedbackReceiversService
     {
         /// <summary>
         /// Creates feedback receivers.

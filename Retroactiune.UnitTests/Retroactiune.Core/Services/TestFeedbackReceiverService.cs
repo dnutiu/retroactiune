@@ -35,7 +35,7 @@ namespace Retroactiune.Tests.Retroactiune.Core.Services
                 .Returns(mongoCollectionMock.Object);
 
             // Test
-            var service = new FeedbackReceiverService(mongoClientMock.Object, mongoSettingsMock.Object);
+            var service = new FeedbackReceiversService(mongoClientMock.Object, mongoSettingsMock.Object);
             var feedbackReceivers = items as FeedbackReceiver[] ?? items.ToArray();
             await service.CreateManyAsync(feedbackReceivers);
 
@@ -70,7 +70,7 @@ namespace Retroactiune.Tests.Retroactiune.Core.Services
                 .Returns(mongoCollectionMock.Object);
 
             // Test
-            var service = new FeedbackReceiverService(mongoClientMock.Object, mongoSettingsMock.Object);
+            var service = new FeedbackReceiversService(mongoClientMock.Object, mongoSettingsMock.Object);
             var ex = Record.ExceptionAsync(async () => await service.CreateManyAsync(null));
 
 
@@ -111,7 +111,7 @@ namespace Retroactiune.Tests.Retroactiune.Core.Services
                 .Returns(mongoCollectionMock.Object);
 
             // Test
-            var service = new FeedbackReceiverService(mongoClientMock.Object, mongoSettingsMock.Object);
+            var service = new FeedbackReceiversService(mongoClientMock.Object, mongoSettingsMock.Object);
             var ex = Record.ExceptionAsync(async () => await service.CreateManyAsync(new List<FeedbackReceiver>()));
 
 
@@ -152,7 +152,7 @@ namespace Retroactiune.Tests.Retroactiune.Core.Services
                 .Returns(mongoCollectionMock.Object);
 
             // Test
-            var service = new FeedbackReceiverService(mongoClientMock.Object, mongoSettingsMock.Object);
+            var service = new FeedbackReceiversService(mongoClientMock.Object, mongoSettingsMock.Object);
             await service.DeleteManyAsync(new []{"insert_guid_here"});
 
             // Assert
@@ -193,7 +193,7 @@ namespace Retroactiune.Tests.Retroactiune.Core.Services
                 .ReturnsAsync(mongoCursorMock.Object);
 
             // Test
-            var service = new FeedbackReceiverService(mongoClientMock.Object, mongoSettingsMock.Object);
+            var service = new FeedbackReceiversService(mongoClientMock.Object, mongoSettingsMock.Object);
             var guids = new[] {"insert_guid_here"};
             await service.FindAsync(guids, 0, 15);
 

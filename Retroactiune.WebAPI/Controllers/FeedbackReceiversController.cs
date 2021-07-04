@@ -22,16 +22,16 @@ namespace Retroactiune.Controllers
         private readonly IOptions<ApiBehaviorOptions> _apiBehaviorOptions;
 
         // Note: Probably refactor this to use an Aggregate object, need to learn more about aggregates..
-        private readonly IFeedbackReceiverService _feedbackReceiverService;
+        private readonly IFeedbackReceiversService _feedbackReceiversService;
         private readonly ITokensService _tokensService;
         private readonly IMapper _mapper;
         private readonly ILogger _logger;
 
-        public FeedbackReceiversController(IFeedbackReceiverService feedbackReceiverService,
+        public FeedbackReceiversController(IFeedbackReceiversService feedbackReceiversService,
             ITokensService tokensService, IMapper mapper,
             IOptions<ApiBehaviorOptions> apiBehaviorOptions, ILogger<FeedbackReceiversController> logger)
         {
-            _feedbackReceiverService = feedbackReceiverService;
+            _feedbackReceiversService = feedbackReceiversService;
             _tokensService = tokensService;
             _mapper = mapper;
             _apiBehaviorOptions = apiBehaviorOptions;
@@ -66,7 +66,7 @@ namespace Retroactiune.Controllers
                 return result;
             });
 
-            await _feedbackReceiverService.CreateManyAsync(mappedItems);
+            await _feedbackReceiversService.CreateManyAsync(mappedItems);
 
             return Ok(new BasicResponse()
             {
@@ -88,7 +88,7 @@ namespace Retroactiune.Controllers
             [StringLength(24, ErrorMessage = "invalid guid, must be 24 characters", MinimumLength = 24)]
             string guid)
         {
-            await Task.WhenAll(_feedbackReceiverService.DeleteManyAsync(new[] {guid}),
+            await Task.WhenAll(_feedbackReceiversService.DeleteManyAsync(new[] {guid}),
                 _tokensService.DeleteManyByFeedbackReceiverIdAsync(new[] {guid}));
             return NoContent();
         }
@@ -109,7 +109,7 @@ namespace Retroactiune.Controllers
             [StringLength(24, ErrorMessage = "invalid guid, must be 24 characters", MinimumLength = 24)]
             string guid)
         {
-            var result = await _feedbackReceiverService.FindAsync(new[] {guid});
+            var result = await _feedbackReceiversService.FindAsync(new[] {guid});
             var feedbackReceivers = result as FeedbackReceiver[] ?? result.ToArray();
             if (!feedbackReceivers.Any())
             {
@@ -140,7 +140,7 @@ namespace Retroactiune.Controllers
             [RangeAttribute(1, 1000, ErrorMessage = "limit is  out of range, allowed ranges [1-1000]"), FromQuery]
             int limit)
         {
-            return Ok(await _feedbackReceiverService.FindAsync(filter, offset, limit));
+            return Ok(await _feedbackReceiversService.FindAsync(filter, offset, limit));
         }
 
         /// <summary>
@@ -158,7 +158,7 @@ namespace Retroactiune.Controllers
             try
             {
                 var feedbackReceiverIds = ids as string[] ?? ids.ToArray();
-                await Task.WhenAll(_feedbackReceiverService.DeleteManyAsync(feedbackReceiverIds),
+                await Task.WhenAll(_feedbackReceiversService.DeleteManyAsync(feedbackReceiverIds),
                     _tokensService.DeleteManyByFeedbackReceiverIdAsync(feedbackReceiverIds));
                 return NoContent();
             }

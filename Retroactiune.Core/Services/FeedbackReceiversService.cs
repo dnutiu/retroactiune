@@ -12,11 +12,11 @@ namespace Retroactiune.Core.Services
     /// Service that simplifies access to the database for managing FeedbackReceiver items.
     /// <see cref="FeedbackReceiver"/>
     /// </summary>
-    public class FeedbackReceiverService : IFeedbackReceiverService
+    public class FeedbackReceiversService : IFeedbackReceiversService
     {
         private readonly IMongoCollection<FeedbackReceiver> _collection;
 
-        public FeedbackReceiverService(IMongoClient client, IDatabaseSettings settings)
+        public FeedbackReceiversService(IMongoClient client, IDatabaseSettings settings)
         {
             var database = client.GetDatabase(settings.DatabaseName);
             _collection = database.GetCollection<FeedbackReceiver>(settings.FeedbackReceiverCollectionName);

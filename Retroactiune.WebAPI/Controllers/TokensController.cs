@@ -17,15 +17,15 @@ namespace Retroactiune.Controllers
     [Route("api/v1/[controller]")]
     public class TokensController : ControllerBase
     {
-        private readonly IFeedbackReceiverService _feedbackReceiverService;
+        private readonly IFeedbackReceiversService _feedbackReceiversService;
         private readonly ITokensService _tokensService;
         private readonly IMapper _mapper;
         private readonly ILogger _logger;
 
-        public TokensController(IFeedbackReceiverService feedbackReceiverService, ITokensService tokensService,
+        public TokensController(IFeedbackReceiversService feedbackReceiversService, ITokensService tokensService,
             ILogger<TokensController> logger, IMapper mapper)
         {
-            _feedbackReceiverService = feedbackReceiverService;
+            _feedbackReceiversService = feedbackReceiversService;
             _tokensService = tokensService;
             _mapper = mapper;
             _logger = logger;
@@ -72,7 +72,7 @@ namespace Retroactiune.Controllers
         public async Task<IActionResult> GenerateTokens([Required] GenerateTokensDto generateTokensDto)
         {
             var feedbackReceiverId = generateTokensDto.FeedbackReceiverId;
-            var result = await _feedbackReceiverService.FindAsync(
+            var result = await _feedbackReceiversService.FindAsync(
                 new[] {feedbackReceiverId});
             if (!result.Any())
             {
