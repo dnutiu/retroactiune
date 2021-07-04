@@ -41,7 +41,7 @@ namespace Retroactiune.IntegrationTests.Retroactiune.WebAPI.Controllers
         public async Task Test_Create_NoContent()
         {
             await _mongoDb.DropAsync();
-            var httpResponse = await _client.PostAsync("/api/v1/FeedbackReceivers/",
+            var httpResponse = await _client.PostAsync("/api/v1/feedback_receivers/",
                 new StringContent("[]", Encoding.UTF8, "application/json"));
             Assert.Equal(HttpStatusCode.BadRequest, httpResponse.StatusCode);
         }
@@ -58,7 +58,7 @@ namespace Retroactiune.IntegrationTests.Retroactiune.WebAPI.Controllers
             var jsonContent = JsonSerializer.Serialize(new List<FeedbackReceiverInDto> {item});
 
             // Test
-            var httpResponse = await _client.PostAsync("/api/v1/FeedbackReceivers/",
+            var httpResponse = await _client.PostAsync("/api/v1/feedback_receivers/",
                 new StringContent(jsonContent, Encoding.UTF8, "application/json"));
 
             // Assert
@@ -77,7 +77,7 @@ namespace Retroactiune.IntegrationTests.Retroactiune.WebAPI.Controllers
             var jsonContent = JsonSerializer.Serialize(new List<FeedbackReceiverInDto> {item});
 
             // Test
-            var httpResponse = await _client.PostAsync("/api/v1/FeedbackReceivers/",
+            var httpResponse = await _client.PostAsync("/api/v1/feedback_receivers/",
                 new StringContent(jsonContent, Encoding.UTF8, "application/json"));
 
             // Assert
@@ -93,7 +93,7 @@ namespace Retroactiune.IntegrationTests.Retroactiune.WebAPI.Controllers
             var jsonContent = JsonSerializer.Serialize(feedbackReceiversDto);
 
             // Test
-            var httpResponse = await _client.PostAsync("/api/v1/FeedbackReceivers/",
+            var httpResponse = await _client.PostAsync("/api/v1/feedback_receivers/",
                 new StringContent(jsonContent, Encoding.UTF8, "application/json"));
 
             // Assert
@@ -112,7 +112,7 @@ namespace Retroactiune.IntegrationTests.Retroactiune.WebAPI.Controllers
 
             // Test
             var httpResponse =
-                await _client.DeleteAsync("/api/v1/FeedbackReceivers/abc_not_guid", CancellationToken.None);
+                await _client.DeleteAsync("/api/v1/feedback_receivers/abc_not_guid", CancellationToken.None);
 
             // Assert
             Assert.Equal(HttpStatusCode.BadRequest, httpResponse.StatusCode);
@@ -138,7 +138,7 @@ namespace Retroactiune.IntegrationTests.Retroactiune.WebAPI.Controllers
             foreach (var guid in guids)
             {
                 var httpResponse =
-                    await _client.DeleteAsync($"/api/v1/FeedbackReceivers/{guid}", CancellationToken.None);
+                    await _client.DeleteAsync($"/api/v1/feedback_receivers/{guid}", CancellationToken.None);
                 Assert.Equal(HttpStatusCode.NoContent, httpResponse.StatusCode);
             }
 
@@ -164,7 +164,7 @@ namespace Retroactiune.IntegrationTests.Retroactiune.WebAPI.Controllers
 
 
             // Test
-            var httpResponse = await _client.DeleteAsync($"/api/v1/FeedbackReceivers/{feedbackReceiver.Id}",
+            var httpResponse = await _client.DeleteAsync($"/api/v1/feedback_receivers/{feedbackReceiver.Id}",
                 CancellationToken.None);
             await _client.PostAsync("/api/v1/Tokens/",
                 new StringContent($"{{\"numberOfTokens\": 100, \"feedbackReceiverId\": \"{feedbackReceiver.Id}\"}}",
@@ -201,7 +201,7 @@ namespace Retroactiune.IntegrationTests.Retroactiune.WebAPI.Controllers
             var request = new HttpRequestMessage
             {
                 Method = HttpMethod.Delete,
-                RequestUri = new Uri($"{_client.BaseAddress.AbsoluteUri}api/v1/FeedbackReceivers"),
+                RequestUri = new Uri($"{_client.BaseAddress.AbsoluteUri}api/v1/feedback_receivers"),
                 // ReSharper disable once MethodHasAsyncOverload
                 Content = new StringContent(JsonConvert.SerializeObject(guids), Encoding.UTF8, "application/json")
             };
@@ -231,7 +231,7 @@ namespace Retroactiune.IntegrationTests.Retroactiune.WebAPI.Controllers
 
             // Test
             var httpResponse =
-                await _client.GetAsync($"/api/v1/FeedbackReceivers/{feedbackReceiver.Id}", CancellationToken.None);
+                await _client.GetAsync($"/api/v1/feedback_receivers/{feedbackReceiver.Id}", CancellationToken.None);
             var item = JsonSerializer.Deserialize<FeedbackReceiver>(
                 await httpResponse.Content.ReadAsStringAsync());
 
@@ -246,7 +246,7 @@ namespace Retroactiune.IntegrationTests.Retroactiune.WebAPI.Controllers
             await _mongoDb.DropAsync();
 
             // Test
-            var httpResponse = await _client.GetAsync("/api/v1/FeedbackReceivers/0102030405060708090a0b0e",
+            var httpResponse = await _client.GetAsync("/api/v1/feedback_receivers/0102030405060708090a0b0e",
                 CancellationToken.None);
 
             // Assert
@@ -260,7 +260,7 @@ namespace Retroactiune.IntegrationTests.Retroactiune.WebAPI.Controllers
             await _mongoDb.DropAsync();
 
             // Test
-            var httpResponse = await _client.GetAsync("/api/v1/FeedbackReceivers/xxx", CancellationToken.None);
+            var httpResponse = await _client.GetAsync("/api/v1/feedback_receivers/xxx", CancellationToken.None);
 
             // Assert
             Assert.Equal(HttpStatusCode.BadRequest, httpResponse.StatusCode);
@@ -300,7 +300,7 @@ namespace Retroactiune.IntegrationTests.Retroactiune.WebAPI.Controllers
 
 
             // Test
-            var httpResponse = await _client.GetAsync("/api/v1/FeedbackReceivers/", CancellationToken.None);
+            var httpResponse = await _client.GetAsync("/api/v1/feedback_receivers/", CancellationToken.None);
             var items = JsonSerializer.Deserialize<List<FeedbackReceiver>>(
                 await httpResponse.Content.ReadAsStringAsync());
 
@@ -348,7 +348,7 @@ namespace Retroactiune.IntegrationTests.Retroactiune.WebAPI.Controllers
             // Test
             var qb = new QueryBuilder {{"filter", new[] {feedbackReceivers[0].Id, feedbackReceivers[1].Id}}};
             var httpResponse =
-                await _client.GetAsync("/api/v1/FeedbackReceivers/" + qb,
+                await _client.GetAsync("/api/v1/feedback_receivers/" + qb,
                     CancellationToken.None);
             var items = JsonSerializer.Deserialize<List<FeedbackReceiver>>(
                 await httpResponse.Content.ReadAsStringAsync());
@@ -397,7 +397,7 @@ namespace Retroactiune.IntegrationTests.Retroactiune.WebAPI.Controllers
 
             // Test
             var qb = new QueryBuilder {{"offset", "1"}, {"limit", "1"}};
-            var httpResponse = await _client.GetAsync("/api/v1/FeedbackReceivers/" + qb, CancellationToken.None);
+            var httpResponse = await _client.GetAsync("/api/v1/feedback_receivers/" + qb, CancellationToken.None);
             var items = JsonSerializer.Deserialize<List<FeedbackReceiver>>(
                 await httpResponse.Content.ReadAsStringAsync());
 

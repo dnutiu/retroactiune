@@ -16,7 +16,7 @@ using Retroactiune.DataTransferObjects;
 namespace Retroactiune.Controllers
 {
     [ApiController]
-    [Route("api/v1/[controller]")]
+    [Route("api/v1/feedback_receivers")]
     public class FeedbackReceiversController : ControllerBase
     {
         private readonly IOptions<ApiBehaviorOptions> _apiBehaviorOptions;
