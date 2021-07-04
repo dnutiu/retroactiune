@@ -45,7 +45,7 @@ namespace Retroactiune.Controllers
             try
             {
                 var tokenFilters = _mapper.Map<TokenListFilters>(filtersDto);
-                var response = await _tokensService.ListTokens(tokenFilters);
+                var response = await _tokensService.FindAsync(tokenFilters);
                 return Ok(response);
             }
             catch (GenericServiceException e)
@@ -104,7 +104,7 @@ namespace Retroactiune.Controllers
         {
             try
             {
-                await _tokensService.DeleteTokens(tokenIds);
+                await _tokensService.DeleteTokensAsync(tokenIds);
                 return NoContent();
             }
             catch (GenericServiceException e)
@@ -133,7 +133,7 @@ namespace Retroactiune.Controllers
         {
             try
             {
-                await _tokensService.DeleteTokens(new[] {guid});
+                await _tokensService.DeleteTokensAsync(new[] {guid});
                 return NoContent();
             }
             catch (GenericServiceException e)

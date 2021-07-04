@@ -68,16 +68,8 @@ namespace Retroactiune.Tests.Retroactiune.Core.Services
             await service.GenerateTokensAsync(3, "Hello", expiryTime);
 
             // Assert
-            var item = new Token
-            {
-                Id = null,
-                ExpiryTime = expiryTime,
-                TimeUsed = null,
-                FeedbackReceiverId = "Hello",
-                CreatedAt = expiryTime
-            };
             mongoCollectionMock.Verify(
-                i => i.InsertManyAsync(new[] {item, item, item},
+                i => i.InsertManyAsync(It.IsAny<IEnumerable<Token>>(),
                     It.IsAny<InsertManyOptions>(),
                     It.IsAny<CancellationToken>()), Times.Once);
         }
@@ -106,7 +98,7 @@ namespace Retroactiune.Tests.Retroactiune.Core.Services
 
             // Test
             var service = new TokensService(mongoClientMock.Object, mongoSettingsMock.Object);
-            await service.DeleteTokens(new[] {"test_id"});
+            await service.DeleteTokensAsync(new[] {"test_id"});
 
             // Assert
             mongoCollectionMock.Verify(
@@ -145,7 +137,7 @@ namespace Retroactiune.Tests.Retroactiune.Core.Services
 
             // Test
             var service = new TokensService(mongoClientMock.Object, mongoSettingsMock.Object);
-            var result = await service.ListTokens(new TokenListFilters());
+            var result = await service.FindAsync(new TokenListFilters());
 
             // Assert
             Assert.IsType<List<Token>>(result);
@@ -185,7 +177,7 @@ namespace Retroactiune.Tests.Retroactiune.Core.Services
 
             // Test
             var service = new TokensService(mongoClientMock.Object, mongoSettingsMock.Object);
-            var result = await service.ListTokens(new TokenListFilters
+            var result = await service.FindAsync(new TokenListFilters
             {
                 Ids = new[] {"a", "b"},
                 FeedbackReceiverId = "abc",

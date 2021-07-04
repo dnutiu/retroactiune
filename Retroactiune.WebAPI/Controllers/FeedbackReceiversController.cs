@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
@@ -24,15 +23,17 @@ namespace Retroactiune.Controllers
         // Note: Probably refactor this to use an Aggregate object, need to learn more about aggregates..
         private readonly IFeedbackReceiversService _feedbackReceiversService;
         private readonly ITokensService _tokensService;
+        private readonly IFeedbacksService _feedbacksService;
         private readonly IMapper _mapper;
         private readonly ILogger _logger;
 
         public FeedbackReceiversController(IFeedbackReceiversService feedbackReceiversService,
-            ITokensService tokensService, IMapper mapper,
+            ITokensService tokensService, IFeedbacksService feedbacksService, IMapper mapper,
             IOptions<ApiBehaviorOptions> apiBehaviorOptions, ILogger<FeedbackReceiversController> logger)
         {
             _feedbackReceiversService = feedbackReceiversService;
             _tokensService = tokensService;
+            _feedbacksService = feedbacksService;
             _mapper = mapper;
             _apiBehaviorOptions = apiBehaviorOptions;
             _logger = logger;
@@ -59,12 +60,7 @@ namespace Retroactiune.Controllers
                 return _apiBehaviorOptions?.Value.InvalidModelStateResponseFactory(ControllerContext);
             }
 
-            var mappedItems = feedbackReceiversDto.Select(i =>
-            {
-                var result = _mapper.Map<FeedbackReceiver>(i);
-                result.CreatedAt = DateTime.UtcNow;
-                return result;
-            });
+            var mappedItems = feedbackReceiversDto.Select(i => _mapper.Map<FeedbackReceiver>(i));
 
             await _feedbackReceiversService.CreateManyAsync(mappedItems);
 
@@ -170,6 +166,58 @@ namespace Retroactiune.Controllers
                     Message = e.Message
                 });
             }
+        }
+
+        /// <summary>
+        /// Add Feedback to a FeedbackReceiver.
+        /// </summary>
+        /// <param name="guid">The guid of the FeedbackReceiver to add feedback.</param>
+        /// <param name="feedbackInDto">The feedback dto.</param>
+        /// <response code="200">The feedback has been added.</response>
+        /// <response code="404">The request is invalid.</response>  
+        /// <returns></returns>
+        [HttpPost("{guid}/feedbacks")]
+        [ProducesResponseType(typeof(NoContentResult), StatusCodes.Status204NoContent)]
+        [ProducesResponseType(typeof(BasicResponse), StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> AddFeedback(string guid, [FromBody] FeedbackInDto feedbackInDto)
+        {
+            // TODO: Unit & integration test.
+            var receivers = await _feedbackReceiversService.FindAsync(new[] {guid}, limit: 1);
+            var tokenEnum = await _tokensService.FindAsync(new TokenListFilters
+            {
+                Ids = new[] {feedbackInDto.TokenId}
+            });
+            var feedbackReceivers = receivers as FeedbackReceiver[] ?? receivers.ToArray();
+            var tokens = (tokenEnum as Token[] ?? tokenEnum.ToArray());
+            if (!feedbackReceivers.Any())
+            {
+                return BadRequest(new BasicResponse
+                {
+                    Message = $"FeedbackReceiver with id {guid} not found."
+                });
+            }
+
+            if (tokens.Length == 0)
+            {
+                return BadRequest(new BasicResponse
+                {
+                    Message = "Token not found."
+                });
+            }
+
+            var token = tokens[0];
+            if (!token.IsValid(feedbackReceivers[0]))
+            {
+                return BadRequest(new BasicResponse
+                {
+                    Message = "Token is invalid."
+                });
+            }
+
+            var feedback = _mapper.Map<Feedback>(feedbackInDto);
+            await Task.WhenAll(_tokensService.MarkTokenAsUsedAsync(token),
+                _feedbacksService.AddFeedbackAsync(feedback, feedbackReceivers[0]));
+            return Ok();
         }
     }
 }

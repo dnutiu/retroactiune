@@ -23,14 +23,14 @@ namespace Retroactiune.Core.Interfaces
         /// </summary>
         /// <param name="tokenIds">A list of tokens to delete.</param>
         /// <returns>The result of the delete operation.</returns>
-        public Task DeleteTokens(IEnumerable<string> tokenIds);
+        public Task DeleteTokensAsync(IEnumerable<string> tokenIds);
 
         /// <summary>
-        /// List and filters tokens.
+        /// Finds and filters tokens.
         /// </summary>
         /// <param name="filters">Filters object for filtering results.</param>
         /// <returns>A list of tokens matching the filters.</returns>
-        public Task<IEnumerable<Token>> ListTokens(TokenListFilters filters);
+        public Task<IEnumerable<Token>> FindAsync(TokenListFilters filters);
 
         /// <summary>
         /// Deletes tokens, by their associated FeedbackReceiverId.
@@ -38,5 +38,11 @@ namespace Retroactiune.Core.Interfaces
         /// <param name="feedbackReceiverIds">A list of FeedbackReceiverIDs.</param>
         /// <returns>The result of the delete operation.</returns>
         public Task DeleteManyByFeedbackReceiverIdAsync(IEnumerable<string> feedbackReceiverIds);
+        
+        /// <summary>
+        /// Marks the token as being used.
+        /// </summary>
+        /// <param name="token">The token.</param>
+        public Task MarkTokenAsUsedAsync(Token token);
     }
 }

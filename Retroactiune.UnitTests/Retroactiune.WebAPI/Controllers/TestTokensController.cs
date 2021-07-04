@@ -74,7 +74,7 @@ namespace Retroactiune.Tests.Retroactiune.WebAPI.Controllers
 
             // Assert
             Assert.IsType<NoContentResult>(result);
-            tokens.Verify(i => i.DeleteTokens(new[] {"my_guid"}), Times.Once);
+            tokens.Verify(i => i.DeleteTokensAsync(new[] {"my_guid"}), Times.Once);
         }
 
         [Fact]
@@ -85,7 +85,7 @@ namespace Retroactiune.Tests.Retroactiune.WebAPI.Controllers
             var feedbackService = new Mock<IFeedbackReceiversService>();
             var tokens = new Mock<ITokensService>();
             var logger = new Mock<ILogger<TokensController>>();
-            tokens.Setup(i => i.DeleteTokens(It.IsAny<IEnumerable<string>>()))
+            tokens.Setup(i => i.DeleteTokensAsync(It.IsAny<IEnumerable<string>>()))
                 .Throws(new GenericServiceException("op fail"));
 
             // Test
@@ -94,7 +94,7 @@ namespace Retroactiune.Tests.Retroactiune.WebAPI.Controllers
 
             // Assert
             Assert.IsType<BadRequestObjectResult>(result);
-            tokens.Verify(i => i.DeleteTokens(new[] {"my_guid"}), Times.Once);
+            tokens.Verify(i => i.DeleteTokensAsync(new[] {"my_guid"}), Times.Once);
         }
 
         [Fact]
@@ -112,7 +112,7 @@ namespace Retroactiune.Tests.Retroactiune.WebAPI.Controllers
 
             // Assert
             Assert.IsType<NoContentResult>(result);
-            tokens.Verify(i => i.DeleteTokens(new[] {"my_guid", "b"}), Times.Once);
+            tokens.Verify(i => i.DeleteTokensAsync(new[] {"my_guid", "b"}), Times.Once);
         }
 
         [Fact]
@@ -123,7 +123,7 @@ namespace Retroactiune.Tests.Retroactiune.WebAPI.Controllers
             var feedbackService = new Mock<IFeedbackReceiversService>();
             var tokens = new Mock<ITokensService>();
             var logger = new Mock<ILogger<TokensController>>();
-            tokens.Setup(i => i.DeleteTokens(It.IsAny<IEnumerable<string>>()))
+            tokens.Setup(i => i.DeleteTokensAsync(It.IsAny<IEnumerable<string>>()))
                 .Throws(new GenericServiceException("op fail"));
 
             // Test
@@ -132,7 +132,7 @@ namespace Retroactiune.Tests.Retroactiune.WebAPI.Controllers
 
             // Assert
             Assert.IsType<BadRequestObjectResult>(result);
-            tokens.Verify(i => i.DeleteTokens(new[] {"my_guid", "b"}), Times.Once);
+            tokens.Verify(i => i.DeleteTokensAsync(new[] {"my_guid", "b"}), Times.Once);
         }
 
         [Fact]
@@ -150,7 +150,7 @@ namespace Retroactiune.Tests.Retroactiune.WebAPI.Controllers
             
             // Assert
             Assert.IsType<OkObjectResult>(result);
-            tokens.Verify(i => i.ListTokens(It.IsAny<TokenListFilters>()), Times.Once);
+            tokens.Verify(i => i.FindAsync(It.IsAny<TokenListFilters>()), Times.Once);
         }
         
         [Fact]
@@ -161,7 +161,7 @@ namespace Retroactiune.Tests.Retroactiune.WebAPI.Controllers
             var feedbackService = new Mock<IFeedbackReceiversService>();
             var tokens = new Mock<ITokensService>();
             var logger = new Mock<ILogger<TokensController>>();
-            tokens.Setup(i => i.ListTokens(It.IsAny<TokenListFilters>()))
+            tokens.Setup(i => i.FindAsync(It.IsAny<TokenListFilters>()))
                 .Throws(new GenericServiceException("op fail"));
 
             // Test
@@ -170,7 +170,7 @@ namespace Retroactiune.Tests.Retroactiune.WebAPI.Controllers
             
             // Assert
             Assert.IsType<BadRequestObjectResult>(result);
-            tokens.Verify(i => i.ListTokens(It.IsAny<TokenListFilters>()), Times.Once);
+            tokens.Verify(i => i.FindAsync(It.IsAny<TokenListFilters>()), Times.Once);
         }
     }
 }

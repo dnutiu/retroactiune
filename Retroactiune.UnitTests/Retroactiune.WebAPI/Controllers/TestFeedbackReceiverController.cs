@@ -23,10 +23,12 @@ namespace Retroactiune.Tests.Retroactiune.WebAPI.Controllers
             var mapper = TestUtils.GetMapper();
             var mockService = new Mock<IFeedbackReceiversService>();
             var tokensService = new Mock<ITokensService>();
+            var feedbacksService = new Mock<IFeedbacksService>();
             var logger = new Mock<ILogger<FeedbackReceiversController>>();
 
             // Test
-            var controller = new FeedbackReceiversController(mockService.Object, tokensService.Object, mapper, null,
+            var controller = new FeedbackReceiversController(mockService.Object, tokensService.Object,
+                feedbacksService.Object, mapper, null,
                 logger.Object);
             var result = await controller.Post(new List<FeedbackReceiverInDto>());
 
@@ -42,10 +44,12 @@ namespace Retroactiune.Tests.Retroactiune.WebAPI.Controllers
             var mapper = TestUtils.GetMapper();
             var mockService = new Mock<IFeedbackReceiversService>();
             var tokensService = new Mock<ITokensService>();
+            var feedbacksService = new Mock<IFeedbacksService>();
             var logger = new Mock<ILogger<FeedbackReceiversController>>();
 
             // Test
-            var controller = new FeedbackReceiversController(mockService.Object, tokensService.Object, mapper, null,
+            var controller = new FeedbackReceiversController(mockService.Object, tokensService.Object,
+                feedbacksService.Object, mapper, null,
                 logger.Object);
             var result = await controller.Post(items);
 
@@ -61,10 +65,12 @@ namespace Retroactiune.Tests.Retroactiune.WebAPI.Controllers
             var mapper = TestUtils.GetMapper();
             var mockService = new Mock<IFeedbackReceiversService>();
             var tokensService = new Mock<ITokensService>();
+            var feedbacksService = new Mock<IFeedbacksService>();
             var logger = new Mock<ILogger<FeedbackReceiversController>>();
 
             // Test
-            var controller = new FeedbackReceiversController(mockService.Object, tokensService.Object, mapper, null,
+            var controller = new FeedbackReceiversController(mockService.Object, tokensService.Object,
+                feedbacksService.Object, mapper, null,
                 logger.Object);
             var result = await controller.Delete("bad_guid_but_unit_test_works_cause_validation_doesnt");
 
@@ -84,10 +90,12 @@ namespace Retroactiune.Tests.Retroactiune.WebAPI.Controllers
             var mapper = TestUtils.GetMapper();
             var mockService = new Mock<IFeedbackReceiversService>();
             var tokensService = new Mock<ITokensService>();
+            var feedbacksService = new Mock<IFeedbacksService>();
             var logger = new Mock<ILogger<FeedbackReceiversController>>();
 
             // Test
-            var controller = new FeedbackReceiversController(mockService.Object, tokensService.Object, mapper, null,
+            var controller = new FeedbackReceiversController(mockService.Object, tokensService.Object,
+                feedbacksService.Object, mapper, null,
                 logger.Object);
             var items = new[] {"bad_guid_but_unit_test_works_cause_validation_doesnt", "2", "3"};
             var result = await controller.DeleteMany(items);
@@ -106,12 +114,14 @@ namespace Retroactiune.Tests.Retroactiune.WebAPI.Controllers
             var mapper = TestUtils.GetMapper();
             var mockService = new Mock<IFeedbackReceiversService>();
             var tokensService = new Mock<ITokensService>();
+            var feedbacksService = new Mock<IFeedbacksService>();
             var logger = new Mock<ILogger<FeedbackReceiversController>>();
             mockService.Setup(i => i.DeleteManyAsync(It.IsAny<IEnumerable<string>>()))
                 .ThrowsAsync(new GenericServiceException("op failed"));
 
             // Test
-            var controller = new FeedbackReceiversController(mockService.Object, tokensService.Object, mapper, null,
+            var controller = new FeedbackReceiversController(mockService.Object, tokensService.Object,
+                feedbacksService.Object, mapper, null,
                 logger.Object);
             var items = new[] {"bad_guid_but_unit_test_works_cause_validation_doesnt", "2", "3"};
             var result = await controller.DeleteMany(items);
@@ -129,12 +139,14 @@ namespace Retroactiune.Tests.Retroactiune.WebAPI.Controllers
             var mapper = TestUtils.GetMapper();
             var mockService = new Mock<IFeedbackReceiversService>();
             var tokensService = new Mock<ITokensService>();
+            var feedbacksService = new Mock<IFeedbacksService>();
             var logger = new Mock<ILogger<FeedbackReceiversController>>();
             mockService.Setup(i => i.FindAsync(It.IsAny<IEnumerable<string>>(), null, null))
                 .ReturnsAsync(new[] {new FeedbackReceiver()});
 
             // Test
-            var controller = new FeedbackReceiversController(mockService.Object, tokensService.Object, mapper, null,
+            var controller = new FeedbackReceiversController(mockService.Object, tokensService.Object,
+                feedbacksService.Object, mapper, null,
                 logger.Object);
             var result = await controller.Get("bad_guid_but_unit_test_works_cause_validation_doesnt");
 
@@ -152,10 +164,12 @@ namespace Retroactiune.Tests.Retroactiune.WebAPI.Controllers
             var mapper = TestUtils.GetMapper();
             var mockService = new Mock<IFeedbackReceiversService>();
             var tokensService = new Mock<ITokensService>();
+            var feedbacksService = new Mock<IFeedbacksService>();
             var logger = new Mock<ILogger<FeedbackReceiversController>>();
 
             // Test
-            var controller = new FeedbackReceiversController(mockService.Object, tokensService.Object, mapper, null,
+            var controller = new FeedbackReceiversController(mockService.Object, tokensService.Object,
+                feedbacksService.Object, mapper, null,
                 logger.Object);
             var result = await controller.Get("bad_guid_but_unit_test_works_cause_validation_doesnt");
 
@@ -173,11 +187,13 @@ namespace Retroactiune.Tests.Retroactiune.WebAPI.Controllers
             var mapper = TestUtils.GetMapper();
             var mockService = new Mock<IFeedbackReceiversService>();
             var tokensService = new Mock<ITokensService>();
+            var feedbacksService = new Mock<IFeedbacksService>();
             var logger = new Mock<ILogger<FeedbackReceiversController>>();
             var filterArr = filter as string[] ?? filter.ToArray();
 
             // Test
-            var controller = new FeedbackReceiversController(mockService.Object, tokensService.Object, mapper, null,
+            var controller = new FeedbackReceiversController(mockService.Object, tokensService.Object,
+                feedbacksService.Object, mapper, null,
                 logger.Object);
             var result = await controller.List(filterArr, offset, limit);
 

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Runtime.CompilerServices;
 using System.Text.Json.Serialization;
+using Ardalis.GuardClauses;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 
@@ -12,6 +13,13 @@ namespace Retroactiune.Core.Entities
     /// </summary>
     public class Token
     {
+
+        public Token()
+        {
+            Id = ObjectId.GenerateNewId().ToString();
+            CreatedAt = DateTime.UtcNow;
+        }
+        
         [BsonId, JsonPropertyName("id")]
         [BsonRepresentation(BsonType.ObjectId)]
         public string Id { get; set; }
@@ -40,6 +48,15 @@ namespace Retroactiune.Core.Entities
         public override int GetHashCode()
         {
             return RuntimeHelpers.GetHashCode(this);
+        }
+
+        public bool IsValid(FeedbackReceiver feedbackReceiver)
+        {
+            Guard.Against.Null(feedbackReceiver, nameof(feedbackReceiver));
+            var hasExpired = ExpiryTime != null && ExpiryTime <= DateTime.UtcNow;
+            var differentFeedbackReceiver = !FeedbackReceiverId.Equals(feedbackReceiver.Id);
+            var isUsed = TimeUsed != null;
+            return !(hasExpired || differentFeedbackReceiver || isUsed);
         }
     }
 }

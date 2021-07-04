@@ -11,6 +11,12 @@ namespace Retroactiune.Core.Entities
     /// </summary>
     public class FeedbackReceiver
     {
+        public FeedbackReceiver()
+        {
+            Id = ObjectId.GenerateNewId().ToString();
+            CreatedAt = DateTime.UtcNow;
+        }
+        
         [BsonId, JsonPropertyName("id")]
         [BsonRepresentation(BsonType.ObjectId)]
         public string Id { get; set; }

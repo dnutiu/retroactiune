@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Ardalis.GuardClauses;
 using MongoDB.Driver;
 using Retroactiune.Core.Entities;
 using Retroactiune.Core.Interfaces;
@@ -21,10 +22,7 @@ namespace Retroactiune.Core.Services
         public async Task GenerateTokensAsync(int numberOfTokens, string feedbackReceiverGuid,
             DateTime? expiryTime = null)
         {
-            if (numberOfTokens <= 0)
-            {
-                throw new ArgumentException("numberOfTokens must be positive");
-            }
+            Guard.Against.Negative(numberOfTokens, nameof(numberOfTokens));
 
             var token = new List<Token>();
             for (var i = 0; i < numberOfTokens; i++)
@@ -41,7 +39,7 @@ namespace Retroactiune.Core.Services
             await _collection.InsertManyAsync(token);
         }
 
-        public async Task DeleteTokens(IEnumerable<string> tokenIds)
+        public async Task DeleteTokensAsync(IEnumerable<string> tokenIds)
         {
             try
             {
@@ -54,7 +52,7 @@ namespace Retroactiune.Core.Services
             }
         }
 
-        public async Task<IEnumerable<Token>> ListTokens(TokenListFilters filters)
+        public async Task<IEnumerable<Token>> FindAsync(TokenListFilters filters)
         {
             var filterBuilder = new FilterDefinitionBuilder<Token>();
             var activeFilters = new List<FilterDefinition<Token>>();
@@ -118,6 +116,15 @@ namespace Retroactiune.Core.Services
             {
                 throw new GenericServiceException($"Operation failed: {e.Message} {e.StackTrace}");
             }
+        }
+
+        public async Task MarkTokenAsUsedAsync(Token token)
+        {
+            // TODO: Unit test.
+            var filterBuilder = new FilterDefinitionBuilder<Token>();
+            var updateBuilder = new UpdateDefinitionBuilder<Token>();
+            await _collection.UpdateOneAsync(filterBuilder.Eq(i => i.Id, token.Id),
+                updateBuilder.Set(i => i.TimeUsed, DateTime.UtcNow));
         }
     }
 }

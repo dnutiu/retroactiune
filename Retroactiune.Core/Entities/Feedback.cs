@@ -10,28 +10,23 @@ namespace Retroactiune.Core.Entities
     /// </summary>
     public class Feedback
     {
-        private uint _rating;
 
+        public Feedback()
+        {
+            Id = ObjectId.GenerateNewId().ToString();
+            CreatedAt = DateTime.UtcNow;
+        }
+        
         [BsonId, JsonPropertyName("id")]
         [BsonRepresentation(BsonType.ObjectId)]
         public string Id { get; set; }
 
+        [JsonPropertyName("feedback_receiver_id")]
+        [BsonRepresentation(BsonType.ObjectId)]
+        public string FeedbackReceiverId { get; set; }
+        
         [JsonPropertyName("rating")]
-        public uint Rating
-        {
-            get => _rating;
-            set
-            {
-                if (value <= 5)
-                {
-                    _rating = value;
-                }
-                else
-                {
-                    throw new ArgumentException();
-                }
-            }
-        }
+        public uint Rating { get; set; }
 
         [JsonPropertyName("description")] public string Description { get; set; }
 

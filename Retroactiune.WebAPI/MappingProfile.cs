@@ -12,6 +12,7 @@ namespace Retroactiune
             CreateMap<ListTokensFiltersDto, TokenListFilters>();
             CreateMap<FeedbackReceiver, FeedbackReceiverInDto>().ReverseMap();
             CreateMap<FeedbackReceiver, FeedbackReceiverOutDto>();
+            CreateMap<FeedbackInDto, Feedback>();
         }
     }
 }
