@@ -1,5 +1,7 @@
 # Introduction
 
+![Build Status](https://circleci.com/gh/dnutiu/retroactiune.svg?style=svg)
+
 The following project uses ASP .Net Core 3.1
 
 ```bash
