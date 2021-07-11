@@ -10,3 +10,8 @@ dotnet --version
 ```
 
 This is a side project and it's still work in progress, therefore the lack of documentation. The goal is to create a Web Application for managing Feedback.
+
+## Architecture
+
+TODO
+

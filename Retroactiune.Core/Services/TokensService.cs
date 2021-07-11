@@ -120,7 +120,7 @@ namespace Retroactiune.Core.Services
 
         public async Task MarkTokenAsUsedAsync(Token token)
         {
-            // TODO: Unit test.
+            Guard.Against.Null(token, nameof(token));
             var filterBuilder = new FilterDefinitionBuilder<Token>();
             var updateBuilder = new UpdateDefinitionBuilder<Token>();
             await _collection.UpdateOneAsync(filterBuilder.Eq(i => i.Id, token.Id),

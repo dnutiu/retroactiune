@@ -181,7 +181,6 @@ namespace Retroactiune.Controllers
         [ProducesResponseType(typeof(BasicResponse), StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> AddFeedback(string guid, [FromBody] FeedbackInDto feedbackInDto)
         {
-            // TODO: Unit & integration test.
             var receivers = await _feedbackReceiversService.FindAsync(new[] {guid}, limit: 1);
             var tokenEnum = await _tokensService.FindAsync(new TokenListFilters
             {
@@ -219,5 +218,7 @@ namespace Retroactiune.Controllers
                 _feedbacksService.AddFeedbackAsync(feedback, feedbackReceivers[0]));
             return Ok();
         }
+        
+        // TODO: Implement get for feedbacks.
     }
 }

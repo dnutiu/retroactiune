@@ -18,6 +18,10 @@ namespace Retroactiune
     [ExcludeFromCodeCoverage]
     public class Startup
     {
+        // TODO: Support for Sentry.
+        // TODO: Support for Prometheus.
+        // TODO: External auth provider.
+        // TODO: UI? 
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;

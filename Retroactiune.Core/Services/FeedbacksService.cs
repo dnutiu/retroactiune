@@ -13,12 +13,11 @@ namespace Retroactiune.Core.Services
         public FeedbacksService(IMongoClient client, IDatabaseSettings settings)
         {
             var database = client.GetDatabase(settings.DatabaseName);
-            _collection = database.GetCollection<Feedback>(settings.FeedbackCollectionName); 
+            _collection = database.GetCollection<Feedback>(settings.FeedbacksCollectionName); 
         }
         
         public async Task AddFeedbackAsync(Feedback feedback, FeedbackReceiver receiver)
         {
-            // TODO: Unit test.
             Guard.Against.Null(feedback, nameof(feedback));
             Guard.Against.Null(receiver, nameof(receiver));
 

@@ -19,7 +19,7 @@ namespace Retroactiune.Core.Services
         public FeedbackReceiversService(IMongoClient client, IDatabaseSettings settings)
         {
             var database = client.GetDatabase(settings.DatabaseName);
-            _collection = database.GetCollection<FeedbackReceiver>(settings.FeedbackReceiverCollectionName);
+            _collection = database.GetCollection<FeedbackReceiver>(settings.FeedbackReceiversCollectionName);
         }
 
         public async Task CreateManyAsync(IEnumerable<FeedbackReceiver> items)

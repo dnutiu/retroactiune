@@ -15,10 +15,13 @@ namespace Retroactiune.IntegrationTests.Retroactiune.WebAPI.Fixtures
         private IMongoDatabase Database { get; }
 
         public IMongoCollection<FeedbackReceiver> FeedbackReceiverCollection =>
-            Database.GetCollection<FeedbackReceiver>(_settings.FeedbackReceiverCollectionName);
+            Database.GetCollection<FeedbackReceiver>(_settings.FeedbackReceiversCollectionName);
 
         public IMongoCollection<Token> TokensCollection =>
             Database.GetCollection<Token>(_settings.TokensCollectionName);
+        
+        public IMongoCollection<Feedback> FeedbacksCollection =>
+            Database.GetCollection<Feedback>(_settings.FeedbacksCollectionName);
 
         public MongoDbFixture(IOptions<DatabaseSettings> options)
         {
@@ -32,8 +35,8 @@ namespace Retroactiune.IntegrationTests.Retroactiune.WebAPI.Fixtures
             await Task.WhenAll(
                 new List<Task>()
                 {
-                    Database.DropCollectionAsync(_settings.FeedbackCollectionName),
-                    Database.DropCollectionAsync(_settings.FeedbackReceiverCollectionName),
+                    Database.DropCollectionAsync(_settings.FeedbacksCollectionName),
+                    Database.DropCollectionAsync(_settings.FeedbackReceiversCollectionName),
                     Database.DropCollectionAsync(_settings.TokensCollectionName)
                 });
         }

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoFixture.Xunit2;
@@ -199,6 +200,124 @@ namespace Retroactiune.Tests.Retroactiune.WebAPI.Controllers
 
             Assert.IsType<OkObjectResult>(result);
             mockService.Verify(s => s.FindAsync(filterArr, offset, limit), Times.Once);
+        }
+
+        // Invalid token
+        // happy
+
+        [Theory, AutoData]
+        public async Task AddFeedback_No_FeedbackReceiver(FeedbackInDto requestBody)
+        {
+            // Arrange
+            var mapper = TestUtils.GetMapper();
+            var feedbackReceiversService = new Mock<IFeedbackReceiversService>();
+            var tokensService = new Mock<ITokensService>();
+            var feedbacksService = new Mock<IFeedbacksService>();
+            var logger = new Mock<ILogger<FeedbackReceiversController>>();
+
+            // Test
+            var controller = new FeedbackReceiversController(feedbackReceiversService.Object, tokensService.Object,
+                feedbacksService.Object, mapper, null,
+                logger.Object);
+            var result = await controller.AddFeedback("guid-test", requestBody);
+
+            // Assert
+            Assert.IsType<BadRequestObjectResult>(result);
+        }
+
+        [Theory, AutoData]
+        public async Task AddFeedback_No_Token(FeedbackInDto requestBody)
+        {
+            // Arrange
+            var mapper = TestUtils.GetMapper();
+            var feedbackReceiversService = new Mock<IFeedbackReceiversService>();
+            var tokensService = new Mock<ITokensService>();
+            var feedbacksService = new Mock<IFeedbacksService>();
+            var logger = new Mock<ILogger<FeedbackReceiversController>>();
+
+            feedbackReceiversService
+                .Setup(i => i.FindAsync(It.IsAny<IEnumerable<string>>(), It.IsAny<int?>(), It.IsAny<int?>()))
+                .ReturnsAsync(new[] {new FeedbackReceiver()});
+
+            // Test
+            var controller = new FeedbackReceiversController(feedbackReceiversService.Object, tokensService.Object,
+                feedbacksService.Object, mapper, null,
+                logger.Object);
+            var result = await controller.AddFeedback("guid-test", requestBody);
+
+            // Assert
+            Assert.IsType<BadRequestObjectResult>(result);
+        }
+
+        [Theory, AutoData]
+        public async Task AddFeedback_Invalid_Token(FeedbackInDto requestBody)
+        {
+            // Arrange
+            var mapper = TestUtils.GetMapper();
+            var feedbackReceiversService = new Mock<IFeedbackReceiversService>();
+            var tokensService = new Mock<ITokensService>();
+            var feedbacksService = new Mock<IFeedbacksService>();
+            var logger = new Mock<ILogger<FeedbackReceiversController>>();
+
+            feedbackReceiversService
+                .Setup(i => i.FindAsync(It.IsAny<IEnumerable<string>>(), It.IsAny<int?>(), It.IsAny<int?>()))
+                .ReturnsAsync(new[] {new FeedbackReceiver()});
+
+            tokensService.Setup(i => i.FindAsync(It.IsAny<TokenListFilters>()))
+                .ReturnsAsync(new[]
+                {
+                    new Token
+                    {
+                        FeedbackReceiverId = "batman",
+                        TimeUsed = DateTime.UtcNow
+                    }
+                });
+            
+            // Test
+            var controller = new FeedbackReceiversController(feedbackReceiversService.Object, tokensService.Object,
+                feedbacksService.Object, mapper, null,
+                logger.Object);
+            var result = await controller.AddFeedback("guid-test", requestBody);
+
+            // Assert
+            Assert.IsType<BadRequestObjectResult>(result);
+        }
+        
+        
+        [Theory, AutoData]
+        public async Task AddFeedback_Happy(FeedbackInDto requestBody)
+        {
+            // Arrange
+            var mapper = TestUtils.GetMapper();
+            var feedbackReceiversService = new Mock<IFeedbackReceiversService>();
+            var tokensService = new Mock<ITokensService>();
+            var feedbacksService = new Mock<IFeedbacksService>();
+            var logger = new Mock<ILogger<FeedbackReceiversController>>();
+
+            feedbackReceiversService
+                .Setup(i => i.FindAsync(It.IsAny<IEnumerable<string>>(), It.IsAny<int?>(), It.IsAny<int?>()))
+                .ReturnsAsync(new[] {new FeedbackReceiver
+                {
+                    Id = "batman"
+                }});
+
+            tokensService.Setup(i => i.FindAsync(It.IsAny<TokenListFilters>()))
+                .ReturnsAsync(new[]
+                {
+                    new Token
+                    {
+                        FeedbackReceiverId = "batman",
+                        TimeUsed = null
+                    }
+                });
+            
+            // Test
+            var controller = new FeedbackReceiversController(feedbackReceiversService.Object, tokensService.Object,
+                feedbacksService.Object, mapper, null, logger.Object);
+            var result = await controller.AddFeedback("guid-test", requestBody);
+
+            // Assert
+            Assert.IsType<OkResult>(result);
         }
     }
 }

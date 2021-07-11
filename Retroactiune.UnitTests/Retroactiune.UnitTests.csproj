@@ -24,8 +24,4 @@
       <ProjectReference Include="..\Retroactiune.WebAPI\Retroactiune.WebAPI.csproj" />
     </ItemGroup>
 
-    <ItemGroup>
-      <Folder Include="Retroactiune.Core" />
-    </ItemGroup>
-
 </Project>

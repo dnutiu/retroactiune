@@ -24,7 +24,7 @@ namespace Retroactiune.Tests.Retroactiune.Core.Services
             var mongoCollectionMock = new Mock<IMongoCollection<FeedbackReceiver>>();
 
             mongoSettingsMock.SetupGet(i => i.DatabaseName).Returns("MyDB");
-            mongoSettingsMock.SetupGet(i => i.FeedbackReceiverCollectionName).Returns("feedback_receiver");
+            mongoSettingsMock.SetupGet(i => i.FeedbackReceiversCollectionName).Returns("feedback_receiver");
 
             mongoClientMock
                 .Setup(stub => stub.GetDatabase(It.IsAny<string>(), It.IsAny<MongoDatabaseSettings>()))
@@ -59,7 +59,7 @@ namespace Retroactiune.Tests.Retroactiune.Core.Services
             var mongoCollectionMock = new Mock<IMongoCollection<FeedbackReceiver>>();
 
             mongoSettingsMock.SetupGet(i => i.DatabaseName).Returns("MyDB");
-            mongoSettingsMock.SetupGet(i => i.FeedbackReceiverCollectionName).Returns("feedback_receiver");
+            mongoSettingsMock.SetupGet(i => i.FeedbackReceiversCollectionName).Returns("feedback_receiver");
 
             mongoClientMock
                 .Setup(i => i.GetDatabase(It.IsAny<string>(), It.IsAny<MongoDatabaseSettings>()))
@@ -100,7 +100,7 @@ namespace Retroactiune.Tests.Retroactiune.Core.Services
             var mongoCollectionMock = new Mock<IMongoCollection<FeedbackReceiver>>();
 
             mongoSettingsMock.SetupGet(i => i.DatabaseName).Returns("MyDB");
-            mongoSettingsMock.SetupGet(i => i.FeedbackReceiverCollectionName).Returns("feedback_receiver");
+            mongoSettingsMock.SetupGet(i => i.FeedbackReceiversCollectionName).Returns("feedback_receiver");
 
             mongoClientMock
                 .Setup(i => i.GetDatabase(It.IsAny<string>(), It.IsAny<MongoDatabaseSettings>()))
@@ -141,7 +141,7 @@ namespace Retroactiune.Tests.Retroactiune.Core.Services
             var mongoCollectionMock = new Mock<IMongoCollection<FeedbackReceiver>>();
 
             mongoSettingsMock.SetupGet(i => i.DatabaseName).Returns("MyDB");
-            mongoSettingsMock.SetupGet(i => i.FeedbackReceiverCollectionName).Returns("feedback_receiver");
+            mongoSettingsMock.SetupGet(i => i.FeedbackReceiversCollectionName).Returns("feedback_receiver");
 
             mongoClientMock
                 .Setup(stub => stub.GetDatabase(It.IsAny<string>(), It.IsAny<MongoDatabaseSettings>()))
@@ -177,7 +177,7 @@ namespace Retroactiune.Tests.Retroactiune.Core.Services
             var mongoCursorMock = new Mock<IAsyncCursor<FeedbackReceiver>>();
 
             mongoSettingsMock.SetupGet(i => i.DatabaseName).Returns("MyDB");
-            mongoSettingsMock.SetupGet(i => i.FeedbackReceiverCollectionName).Returns("feedback_receiver");
+            mongoSettingsMock.SetupGet(i => i.FeedbackReceiversCollectionName).Returns("feedback_receiver");
 
             mongoClientMock
                 .Setup(stub => stub.GetDatabase(It.IsAny<string>(), It.IsAny<MongoDatabaseSettings>()))

@@ -156,7 +156,7 @@ namespace Retroactiune.IntegrationTests.Retroactiune.WebAPI.Controllers
             var feedbackReceiver = new FeedbackReceiver
             {
                 Id = ObjectId.GenerateNewId().ToString(),
-                Description = "blam",
+                Description = "blame",
                 CreatedAt = DateTime.UtcNow,
                 Name = "test"
             };
@@ -405,6 +405,45 @@ namespace Retroactiune.IntegrationTests.Retroactiune.WebAPI.Controllers
             Assert.Equal(HttpStatusCode.OK, httpResponse.StatusCode);
             Assert.Single(items);
             Assert.Equal(feedbackReceivers[1], items[0]);
+        }
+
+        [Fact]
+        public async Task Test_AddFeedback_Happy()
+        {
+            // Setup
+            await _mongoDb.DropAsync();
+            var feedbackReceiver = new FeedbackReceiver();
+            var token = new Token
+            {
+                FeedbackReceiverId = feedbackReceiver.Id
+            };
+            await _mongoDb.FeedbackReceiverCollection.InsertOneAsync(feedbackReceiver);
+            await _mongoDb.TokensCollection.InsertOneAsync(token);
+
+            // Test
+            var feedback = new FeedbackInDto
+            {
+                TokenId = token.Id,
+                Description = "ok",
+                Rating = 4
+            };
+            var content = JsonSerializer.Serialize(feedback);
+            var response = await _client.PostAsync($"api/v1/feedback_receivers/{feedbackReceiver.Id}/feedbacks",
+                new StringContent(content, Encoding.UTF8, "application/json"));
+
+            // Assert
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            var feedbacksCursor = await _mongoDb.FeedbacksCollection.FindAsync(FilterDefinition<Feedback>.Empty);
+            var feedbacks = await feedbacksCursor.ToListAsync();
+            
+            Assert.Equal("ok", feedbacks.ElementAt(0).Description);
+            Assert.Equal(4u, feedbacks.ElementAt(0).Rating);
+            Assert.Equal(feedbackReceiver.Id, feedbacks.ElementAt(0).FeedbackReceiverId);
+            
+            var tokensCursor = await _mongoDb.TokensCollection.FindAsync(FilterDefinition<Token>.Empty);
+            var tokens = await tokensCursor.ToListAsync();
+            
+            Assert.NotNull(tokens.ElementAt(0).TimeUsed);
         }
     }
 }
