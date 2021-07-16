@@ -9,6 +9,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using MongoDB.Driver;
+using Prometheus;
 using Retroactiune.Core.Interfaces;
 using Retroactiune.Core.Services;
 using Retroactiune.Infrastructure;
@@ -19,7 +20,6 @@ namespace Retroactiune
     public class Startup
     {
         // TODO: Support for Sentry.
-        // TODO: Support for Prometheus.
         // TODO: External auth provider.
         // TODO: UI? 
         public Startup(IConfiguration configuration)
@@ -68,6 +68,8 @@ namespace Retroactiune
                 app.UseDeveloperExceptionPage();
             }
 
+            app.UseMetricServer();
+            
             app.UseSwagger();
             app.UseSwaggerUI(c =>
             {
