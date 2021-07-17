@@ -13,13 +13,13 @@ using Prometheus;
 using Retroactiune.Core.Interfaces;
 using Retroactiune.Core.Services;
 using Retroactiune.Infrastructure;
+using Sentry.AspNetCore;
 
 namespace Retroactiune
 {
     [ExcludeFromCodeCoverage]
     public class Startup
     {
-        // TODO: Support for Sentry.
         // TODO: External auth provider.
         // TODO: UI? 
         public Startup(IConfiguration configuration)
@@ -78,7 +78,8 @@ namespace Retroactiune
             });
 
             app.UseHttpsRedirection();
-
+            
+            app.UseSentryTracing();
             app.UseRouting();
 
             app.UseAuthorization();
