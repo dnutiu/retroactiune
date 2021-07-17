@@ -1,7 +1,7 @@
 # Introduction
 
 ![Under Development](https://img.shields.io/badge/status-Under%20Development-orange) ![Build Status](https://circleci.com/gh/dnutiu/retroactiune.svg?style=svg)  
-![GitHub commit activity](https://img.shields.io/github/commit-activity/w/dnutiu/retroactiune) ![GitHub repo size](https://img.shields.io/github/repo-size/dnutiu/retroactiune) ![GitHub top language](https://img.shields.io/github/languages/top/dnutiu/retroactiune)
+![GitHub commit activity](https://img.shields.io/github/commit-activity/m/dnutiu/retroactiune) ![GitHub repo size](https://img.shields.io/github/repo-size/dnutiu/retroactiune) ![GitHub top language](https://img.shields.io/github/languages/top/dnutiu/retroactiune)
 
 ![Swagger API](./docs/retroactiune_swagger.png)
 
