@@ -33,7 +33,6 @@ The application code is organized using the [Clean Architecture](https://docs.mi
 
 ## Developing
 
-
 To install the dependencies run `dotnet restore`.
 
 To run the project run
