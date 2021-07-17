@@ -219,7 +219,7 @@ namespace Retroactiune.Tests.Retroactiune.WebAPI.Controllers
             var controller = new FeedbackReceiversController(feedbackReceiversService.Object, tokensService.Object,
                 feedbacksService.Object, mapper, null,
                 logger.Object);
-            var result = await controller.AddFeedback("guid-test", requestBody);
+            var result = await controller.AddFeedback(requestBody);
 
             // Assert
             Assert.IsType<BadRequestObjectResult>(result);
@@ -243,7 +243,7 @@ namespace Retroactiune.Tests.Retroactiune.WebAPI.Controllers
             var controller = new FeedbackReceiversController(feedbackReceiversService.Object, tokensService.Object,
                 feedbacksService.Object, mapper, null,
                 logger.Object);
-            var result = await controller.AddFeedback("guid-test", requestBody);
+            var result = await controller.AddFeedback(requestBody);
 
             // Assert
             Assert.IsType<BadRequestObjectResult>(result);
@@ -277,7 +277,7 @@ namespace Retroactiune.Tests.Retroactiune.WebAPI.Controllers
             var controller = new FeedbackReceiversController(feedbackReceiversService.Object, tokensService.Object,
                 feedbacksService.Object, mapper, null,
                 logger.Object);
-            var result = await controller.AddFeedback("guid-test", requestBody);
+            var result = await controller.AddFeedback(requestBody);
 
             // Assert
             Assert.IsType<BadRequestObjectResult>(result);
@@ -314,7 +314,7 @@ namespace Retroactiune.Tests.Retroactiune.WebAPI.Controllers
             // Test
             var controller = new FeedbackReceiversController(feedbackReceiversService.Object, tokensService.Object,
                 feedbacksService.Object, mapper, null, logger.Object);
-            var result = await controller.AddFeedback("guid-test", requestBody);
+            var result = await controller.AddFeedback(requestBody);
 
             // Assert
             Assert.IsType<OkResult>(result);

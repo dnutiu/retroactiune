@@ -172,31 +172,21 @@ namespace Retroactiune.Controllers
         /// <summary>
         /// Add Feedback to a FeedbackReceiver.
         /// </summary>
-        /// <param name="guid">The guid of the FeedbackReceiver to add feedback.</param>
         /// <param name="feedbackInDto">The feedback dto.</param>
         /// <response code="200">The feedback has been added.</response>
         /// <response code="400">The request is invalid.</response>  
         /// <returns></returns>
-        [HttpPost("{guid}/feedbacks")]
+        [HttpPost("feedbacks")]
         [ProducesResponseType(typeof(NoContentResult), StatusCodes.Status204NoContent)]
         [ProducesResponseType(typeof(BasicResponse), StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> AddFeedback(string guid, [FromBody] FeedbackInDto feedbackInDto)
+        public async Task<IActionResult> AddFeedback([FromBody] FeedbackInDto feedbackInDto)
         {
-            // TODO: Remove guid from request and infer it from the given token.
-            var receivers = await _feedbackReceiversService.FindAsync(new[] {guid}, limit: 1);
             var tokenEnum = await _tokensService.FindAsync(new TokenListFilters
             {
                 Ids = new[] {feedbackInDto.TokenId}
             });
-            var feedbackReceivers = receivers as FeedbackReceiver[] ?? receivers.ToArray();
             var tokens = (tokenEnum as Token[] ?? tokenEnum.ToArray());
-            if (!feedbackReceivers.Any())
-            {
-                return BadRequest(new BasicResponse
-                {
-                    Message = $"FeedbackReceiver with id {guid} not found."
-                });
-            }
+
 
             if (tokens.Length == 0)
             {
@@ -207,6 +197,19 @@ namespace Retroactiune.Controllers
             }
 
             var token = tokens[0];
+
+            var receivers = await _feedbackReceiversService.FindAsync(
+                new[] {token.FeedbackReceiverId}, limit: 1
+            );
+            var feedbackReceivers = receivers as FeedbackReceiver[] ?? receivers.ToArray();
+            if (!feedbackReceivers.Any())
+            {
+                return BadRequest(new BasicResponse
+                {
+                    Message = $"FeedbackReceiver with id {token.FeedbackReceiverId} not found."
+                });
+            }
+
             if (!token.IsValid(feedbackReceivers[0]))
             {
                 return BadRequest(new BasicResponse

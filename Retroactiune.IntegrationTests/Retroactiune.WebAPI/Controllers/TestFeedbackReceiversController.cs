@@ -428,7 +428,7 @@ namespace Retroactiune.IntegrationTests.Retroactiune.WebAPI.Controllers
                 Rating = 4
             };
             var content = JsonSerializer.Serialize(feedback);
-            var response = await _client.PostAsync($"api/v1/feedback_receivers/{feedbackReceiver.Id}/feedbacks",
+            var response = await _client.PostAsync($"api/v1/feedback_receivers/feedbacks",
                 new StringContent(content, Encoding.UTF8, "application/json"));
 
             // Assert
