@@ -4,7 +4,7 @@ using System.Collections.Generic;
 namespace Retroactiune.Core.Services
 {
     /// <summary>
-    /// TokenListFilters is a data class representing the filters used to list tokens.
+    /// TokenListFilters is a data class for filtering Tokens.
     /// </summary>
     public class TokenListFilters
     {

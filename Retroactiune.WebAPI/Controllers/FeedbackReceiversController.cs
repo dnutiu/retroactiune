@@ -129,6 +129,7 @@ namespace Retroactiune.Controllers
         /// <response code="400">The request is invalid.</response>  
         [HttpGet]
         [ProducesResponseType(typeof(IEnumerable<FeedbackReceiverOutDto>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(BasicResponse), StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> List([FromQuery] IEnumerable<string> filter,
             [RangeAttribute(1, int.MaxValue, ErrorMessage = "offset is  out of range, allowed ranges [1-IntMax]"),
              FromQuery]
@@ -144,7 +145,7 @@ namespace Retroactiune.Controllers
         /// </summary>
         /// <param name="ids">A list of FeedbackReceiver ids.</param>
         /// <response code="204">The request to delete the items has been submitted.</response>
-        /// <response code="404">The request is invalid.</response>  
+        /// <response code="400">The request is invalid.</response>  
         /// <returns></returns>
         [HttpDelete]
         [ProducesResponseType(typeof(NoContentResult), StatusCodes.Status204NoContent)]
@@ -174,13 +175,14 @@ namespace Retroactiune.Controllers
         /// <param name="guid">The guid of the FeedbackReceiver to add feedback.</param>
         /// <param name="feedbackInDto">The feedback dto.</param>
         /// <response code="200">The feedback has been added.</response>
-        /// <response code="404">The request is invalid.</response>  
+        /// <response code="400">The request is invalid.</response>  
         /// <returns></returns>
         [HttpPost("{guid}/feedbacks")]
         [ProducesResponseType(typeof(NoContentResult), StatusCodes.Status204NoContent)]
         [ProducesResponseType(typeof(BasicResponse), StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> AddFeedback(string guid, [FromBody] FeedbackInDto feedbackInDto)
         {
+            // TODO: Remove guid from request and infer it from the given token.
             var receivers = await _feedbackReceiversService.FindAsync(new[] {guid}, limit: 1);
             var tokenEnum = await _tokensService.FindAsync(new TokenListFilters
             {
@@ -218,7 +220,25 @@ namespace Retroactiune.Controllers
                 _feedbacksService.AddFeedbackAsync(feedback, feedbackReceivers[0]));
             return Ok();
         }
-        
-        // TODO: Implement get for feedbacks.
+
+        /// <summary>
+        /// Returns the Feedbacks of a FeedbackReceiver. See <see cref="Feedback"/> and <see cref="FeedbackReceiver"/>.
+        /// </summary>
+        /// <param name="guid">The guid of the FeedbackReceiver.</param>
+        /// <param name="filters">Query filters for filtering the response.</param>
+        /// <response code="200">The feedback has been added.</response>
+        /// <response code="400">The request is invalid.</response>  
+        /// <returns></returns>
+        [HttpGet("{guid}/feedbacks")]
+        [ProducesResponseType(typeof(NoContentResult), StatusCodes.Status204NoContent)]
+        [ProducesResponseType(typeof(BasicResponse), StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> GetFeedbacks(string guid, [FromQuery] ListFeedbacksFiltersDto filters)
+        {
+            // TODO: Unit & Integration test.
+            var feedbacksListFilters = _mapper.Map<FeedbacksListFilters>(filters);
+            feedbacksListFilters.FeedbackReceiverId = guid;
+            var response = await _feedbacksService.GetFeedbacksAsync(feedbacksListFilters);
+            return Ok(response);
+        }
     }
 }

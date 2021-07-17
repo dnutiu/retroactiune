@@ -10,6 +10,7 @@ namespace Retroactiune
         public MappingProfile()
         {
             CreateMap<ListTokensFiltersDto, TokenListFilters>();
+            CreateMap<ListFeedbacksFiltersDto, FeedbacksListFilters>();
             CreateMap<FeedbackReceiver, FeedbackReceiverInDto>().ReverseMap();
             CreateMap<FeedbackReceiver, FeedbackReceiverOutDto>();
             CreateMap<FeedbackInDto, Feedback>();
