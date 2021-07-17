@@ -13,7 +13,7 @@ The given Feedback is anonymous by design.
 
 ## Tech Stack
 
-The project uses ASP .Net Core 3.1 and [MongoDB](https://www.mongodb.com/).
+The project uses [ASP .Net Core 3.1](https://docs.microsoft.com/en-us/aspnet/core/) and [MongoDB](https://www.mongodb.com/).
 
 ```bash
 dotnet --version
