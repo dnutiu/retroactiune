@@ -81,5 +81,110 @@ namespace Retroactiune.Tests.Retroactiune.Core.Services
                     It.IsAny<InsertOneOptions>(),
                     It.IsAny<CancellationToken>()));
         }
+
+        [Fact]
+        public async Task Test_GetFeedbacksAsync_NullGuards()
+        {
+            // Setup
+            var mongoDatabaseMock = new Mock<IMongoDatabase>();
+            var mongoClientMock = new Mock<IMongoClient>();
+            var mongoSettingsMock = new Mock<IDatabaseSettings>();
+            var mongoCollectionMock = new Mock<IMongoCollection<Feedback>>();
+
+            mongoSettingsMock.SetupGet(i => i.DatabaseName).Returns("MyDB");
+            mongoSettingsMock.SetupGet(i => i.FeedbacksCollectionName).Returns("feedbacks");
+
+            mongoClientMock
+                .Setup(stub => stub.GetDatabase(It.IsAny<string>(),
+                    It.IsAny<MongoDatabaseSettings>()))
+                .Returns(mongoDatabaseMock.Object);
+
+            mongoDatabaseMock
+                .Setup(i => i.GetCollection<Feedback>(It.IsAny<string>(),
+                    It.IsAny<MongoCollectionSettings>()))
+                .Returns(mongoCollectionMock.Object);
+
+            // Test & Assert
+            var service = new FeedbacksService(mongoClientMock.Object, mongoSettingsMock.Object);
+            await Assert.ThrowsAsync<ArgumentNullException>(async () => { await service.GetFeedbacksAsync(null); });
+            await Assert.ThrowsAsync<ArgumentNullException>(async () =>
+            {
+                await service.GetFeedbacksAsync(new FeedbacksListFilters());
+            });
+        }
+
+
+        [Theory, AutoData]
+        public async Task Test_GetFeedbacksAsync_Happy(FeedbacksListFilters feedbacksListFilters)
+        {
+            // Setup
+            var mongoDatabaseMock = new Mock<IMongoDatabase>();
+            var mongoClientMock = new Mock<IMongoClient>();
+            var mongoSettingsMock = new Mock<IDatabaseSettings>();
+            var mongoCollectionMock = new Mock<IMongoCollection<Feedback>>();
+
+            mongoSettingsMock.SetupGet(i => i.DatabaseName).Returns("MyDB");
+            mongoSettingsMock.SetupGet(i => i.FeedbacksCollectionName).Returns("feedbacks");
+
+            mongoClientMock
+                .Setup(stub => stub.GetDatabase(It.IsAny<string>(),
+                    It.IsAny<MongoDatabaseSettings>()))
+                .Returns(mongoDatabaseMock.Object);
+
+            mongoDatabaseMock
+                .Setup(i => i.GetCollection<Feedback>(It.IsAny<string>(),
+                    It.IsAny<MongoCollectionSettings>()))
+                .Returns(mongoCollectionMock.Object);
+
+            mongoCollectionMock.Setup(i => i.FindAsync(It.IsAny<FilterDefinition<Feedback>>(),
+                    It.IsAny<FindOptions<Feedback, Feedback>>(), It.IsAny<CancellationToken>()))
+                .ReturnsAsync(new Mock<IAsyncCursor<Feedback>>().Object);
+
+            // Test
+            var service = new FeedbacksService(mongoClientMock.Object, mongoSettingsMock.Object);
+            await service.GetFeedbacksAsync(feedbacksListFilters);
+
+            // Assert
+            mongoCollectionMock.Verify(i => i.FindAsync(It.IsAny<FilterDefinition<Feedback>>(),
+                It.IsAny<FindOptions<Feedback, Feedback>>(), It.IsAny<CancellationToken>()));
+        }
+        
+        [Theory, AutoData]
+        public async Task Test_GetFeedbacksAsync_Happy_MinimalFilters(string feedbackReceiverId)
+        {
+            // Setup
+            var mongoDatabaseMock = new Mock<IMongoDatabase>();
+            var mongoClientMock = new Mock<IMongoClient>();
+            var mongoSettingsMock = new Mock<IDatabaseSettings>();
+            var mongoCollectionMock = new Mock<IMongoCollection<Feedback>>();
+
+            mongoSettingsMock.SetupGet(i => i.DatabaseName).Returns("MyDB");
+            mongoSettingsMock.SetupGet(i => i.FeedbacksCollectionName).Returns("feedbacks");
+
+            mongoClientMock
+                .Setup(stub => stub.GetDatabase(It.IsAny<string>(),
+                    It.IsAny<MongoDatabaseSettings>()))
+                .Returns(mongoDatabaseMock.Object);
+
+            mongoDatabaseMock
+                .Setup(i => i.GetCollection<Feedback>(It.IsAny<string>(),
+                    It.IsAny<MongoCollectionSettings>()))
+                .Returns(mongoCollectionMock.Object);
+
+            mongoCollectionMock.Setup(i => i.FindAsync(It.IsAny<FilterDefinition<Feedback>>(),
+                    It.IsAny<FindOptions<Feedback, Feedback>>(), It.IsAny<CancellationToken>()))
+                .ReturnsAsync(new Mock<IAsyncCursor<Feedback>>().Object);
+
+            // Test
+            var service = new FeedbacksService(mongoClientMock.Object, mongoSettingsMock.Object);
+            await service.GetFeedbacksAsync(new FeedbacksListFilters()
+            {
+                FeedbackReceiverId = feedbackReceiverId
+            });
+
+            // Assert
+            mongoCollectionMock.Verify(i => i.FindAsync(It.IsAny<FilterDefinition<Feedback>>(),
+                It.IsAny<FindOptions<Feedback, Feedback>>(), It.IsAny<CancellationToken>()));
+        }
     }
 }

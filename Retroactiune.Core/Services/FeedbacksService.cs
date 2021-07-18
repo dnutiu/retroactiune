@@ -28,7 +28,6 @@ namespace Retroactiune.Core.Services
 
         public async Task<IEnumerable<Feedback>> GetFeedbacksAsync(FeedbacksListFilters filters)
         {
-            // TODO: Unit test.
             Guard.Against.Null(filters, nameof(filters));
             Guard.Against.Null(filters.FeedbackReceiverId, nameof(filters.FeedbackReceiverId));
             
