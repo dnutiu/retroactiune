@@ -7,7 +7,7 @@ namespace Retroactiune.DataTransferObjects
     /// </summary>
     public class ListFeedbacksFiltersDto
     {
-        public uint Rating { get; set; }
+        public uint? Rating { get; set; }
         public DateTime? CreatedAfter { get; set; }
         public DateTime? CreatedBefore { get; set; }
     }

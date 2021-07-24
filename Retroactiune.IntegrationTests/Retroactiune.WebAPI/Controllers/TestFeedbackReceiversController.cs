@@ -435,15 +435,42 @@ namespace Retroactiune.IntegrationTests.Retroactiune.WebAPI.Controllers
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
             var feedbacksCursor = await _mongoDb.FeedbacksCollection.FindAsync(FilterDefinition<Feedback>.Empty);
             var feedbacks = await feedbacksCursor.ToListAsync();
-            
+
             Assert.Equal("ok", feedbacks.ElementAt(0).Description);
             Assert.Equal(4u, feedbacks.ElementAt(0).Rating);
             Assert.Equal(feedbackReceiver.Id, feedbacks.ElementAt(0).FeedbackReceiverId);
-            
+
             var tokensCursor = await _mongoDb.TokensCollection.FindAsync(FilterDefinition<Token>.Empty);
             var tokens = await tokensCursor.ToListAsync();
-            
+
             Assert.NotNull(tokens.ElementAt(0).TimeUsed);
+        }
+
+        [Theory, AutoData]
+        public async Task Test_GetFeedbacks(IEnumerable<Feedback> feedbacksSeed)
+        {
+            // Setup
+            await _mongoDb.DropAsync();
+            var feedbackReceiverGuid = ObjectId.GenerateNewId().ToString();
+            var selectedFeedbacksSeed = feedbacksSeed.Select(i =>
+            {
+                i.Id = ObjectId.GenerateNewId().ToString();
+                i.CreatedAt = i.CreatedAt.ToUniversalTime();
+                i.FeedbackReceiverId = feedbackReceiverGuid;
+                return i;
+            }).ToList();
+
+            await _mongoDb.FeedbacksCollection.InsertManyAsync(selectedFeedbacksSeed);
+
+            // Test
+            var response = await _client.GetAsync($"/api/v1/feedback_receivers/{feedbackReceiverGuid}/feedbacks");
+
+
+            // Assert
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            var feedbacksResponse =
+                JsonSerializer.Deserialize<List<Feedback>>(await response.Content.ReadAsStringAsync());
+            Assert.Equal(selectedFeedbacksSeed,feedbacksResponse);
         }
     }
 }
