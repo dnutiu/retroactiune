@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
@@ -142,6 +143,42 @@ namespace Retroactiune.Controllers
                 return BadRequest(new BasicResponse
                 {
                     Message = e.Message
+                });
+            }
+        }
+
+        /// <summary>
+        /// Checks if a token is valid or not.
+        /// </summary>
+        /// <response code="200">The the result of the check.</response>
+        /// <response code="400">The request is invalid.</response>
+        [HttpGet("{guid}/check")]
+        [ProducesResponseType(typeof(CheckTokenDto), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> CheckToken(
+            [StringLength(24, ErrorMessage = "invalid guid, must be 24 characters", MinimumLength = 24)]
+            string guid
+        )
+        {
+            // TODO: Unit test.
+            var response = await _tokensService.FindAsync(new TokenListFilters
+            {
+                Ids = new[] {guid}
+            });
+            try
+            {
+                var token = response.ElementAt(0);
+                return Ok(new CheckTokenDto
+                {
+                    IsValid = token.IsValid()
+                });
+            }
+            catch (ArgumentOutOfRangeException)
+            {
+                _logger.LogWarning("Invalid token {Guid}", guid);
+                return Ok(new CheckTokenDto
+                {
+                    IsValid = true
                 });
             }
         }

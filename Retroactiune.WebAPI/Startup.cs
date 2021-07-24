@@ -21,6 +21,7 @@ namespace Retroactiune
     public class Startup
     {
         // TODO: External auth provider.
+        // TODO: Improve coverage.
         // TODO: UI? 
         public Startup(IConfiguration configuration)
         {

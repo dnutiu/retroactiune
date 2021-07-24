@@ -33,6 +33,16 @@ namespace Retroactiune.Core.Entities
 
         [JsonPropertyName("expiry_time")] public DateTime? ExpiryTime { get; set; }
 
+        public static bool operator ==(Token left, Token right)
+        {
+            return Equals(left, right);
+        }
+
+        public static bool operator !=(Token left, Token right)
+        {
+            return !Equals(left, right);
+        }
+        
         public override bool Equals(object obj)
         {
             if (!(obj is Token convertedObj))
@@ -50,13 +60,18 @@ namespace Retroactiune.Core.Entities
             return RuntimeHelpers.GetHashCode(this);
         }
 
+        public bool IsValid()
+        {
+            var hasExpired = ExpiryTime != null && ExpiryTime <= DateTime.UtcNow;
+            var isUsed = TimeUsed != null;
+            return !(hasExpired || isUsed);
+        }
+        
         public bool IsValid(FeedbackReceiver feedbackReceiver)
         {
             Guard.Against.Null(feedbackReceiver, nameof(feedbackReceiver));
-            var hasExpired = ExpiryTime != null && ExpiryTime <= DateTime.UtcNow;
             var differentFeedbackReceiver = !FeedbackReceiverId.Equals(feedbackReceiver.Id);
-            var isUsed = TimeUsed != null;
-            return !(hasExpired || differentFeedbackReceiver || isUsed);
+            return !differentFeedbackReceiver && IsValid();
         }
     }
 }

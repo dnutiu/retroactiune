@@ -202,9 +202,6 @@ namespace Retroactiune.Tests.Retroactiune.WebAPI.Controllers
             mockService.Verify(s => s.FindAsync(filterArr, offset, limit), Times.Once);
         }
 
-        // Invalid token
-        // happy
-
         [Theory, AutoData]
         public async Task AddFeedback_No_FeedbackReceiver(FeedbackInDto requestBody)
         {
@@ -272,7 +269,7 @@ namespace Retroactiune.Tests.Retroactiune.WebAPI.Controllers
                         TimeUsed = DateTime.UtcNow
                     }
                 });
-            
+
             // Test
             var controller = new FeedbackReceiversController(feedbackReceiversService.Object, tokensService.Object,
                 feedbacksService.Object, mapper, null,
@@ -282,8 +279,8 @@ namespace Retroactiune.Tests.Retroactiune.WebAPI.Controllers
             // Assert
             Assert.IsType<BadRequestObjectResult>(result);
         }
-        
-        
+
+
         [Theory, AutoData]
         public async Task AddFeedback_Happy(FeedbackInDto requestBody)
         {
@@ -295,11 +292,15 @@ namespace Retroactiune.Tests.Retroactiune.WebAPI.Controllers
             var logger = new Mock<ILogger<FeedbackReceiversController>>();
 
             feedbackReceiversService
-                .Setup(i => i.FindAsync(It.IsAny<IEnumerable<string>>(), It.IsAny<int?>(), It.IsAny<int?>()))
-                .ReturnsAsync(new[] {new FeedbackReceiver
+                .Setup(i => i.FindAsync(It.IsAny<IEnumerable<string>>(),
+                    It.IsAny<int?>(), It.IsAny<int?>()))
+                .ReturnsAsync(new[]
                 {
-                    Id = "batman"
-                }});
+                    new FeedbackReceiver
+                    {
+                        Id = "batman"
+                    }
+                });
 
             tokensService.Setup(i => i.FindAsync(It.IsAny<TokenListFilters>()))
                 .ReturnsAsync(new[]
@@ -310,7 +311,7 @@ namespace Retroactiune.Tests.Retroactiune.WebAPI.Controllers
                         TimeUsed = null
                     }
                 });
-            
+
             // Test
             var controller = new FeedbackReceiversController(feedbackReceiversService.Object, tokensService.Object,
                 feedbacksService.Object, mapper, null, logger.Object);
@@ -318,6 +319,32 @@ namespace Retroactiune.Tests.Retroactiune.WebAPI.Controllers
 
             // Assert
             Assert.IsType<OkResult>(result);
+            feedbacksService.Verify(i => i.AddFeedbackAsync(It.IsAny<Feedback>(),
+                It.IsAny<FeedbackReceiver>()));
+            tokensService.Verify(i => i.MarkTokenAsUsedAsync(It.IsAny<Token>()));
+        }
+
+        [Theory, AutoData]
+        public async Task GetFeedbacks_Happy(string guid, ListFeedbacksFiltersDto filters)
+        {
+            // Arrange
+            var mapper = TestUtils.GetMapper();
+            var feedbackReceiversService = new Mock<IFeedbackReceiversService>();
+            var tokensService = new Mock<ITokensService>();
+            var feedbacksService = new Mock<IFeedbacksService>();
+            var logger = new Mock<ILogger<FeedbackReceiversController>>();
+
+            // Test
+            var controller = new FeedbackReceiversController(feedbackReceiversService.Object, tokensService.Object,
+                feedbacksService.Object, mapper, null, logger.Object);
+            var result = await controller.GetFeedbacks(guid, filters);
+
+            // Assert
+            Assert.IsType<OkObjectResult>(result);
+
+            var listFilters = mapper.Map<FeedbacksListFilters>(filters);
+            listFilters.FeedbackReceiverId = guid;
+            feedbacksService.Verify(i => i.GetFeedbacksAsync(listFilters));
         }
     }
 }

@@ -82,7 +82,7 @@ namespace Retroactiune.Controllers
         [ProducesResponseType(typeof(BasicResponse), StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> GetFeedbacks(string guid, [FromQuery] ListFeedbacksFiltersDto filters)
         {
-            // TODO: Unit & Integration test.
+            // TODO: Integration test.
             var feedbacksListFilters = _mapper.Map<FeedbacksListFilters>(filters);
             feedbacksListFilters.FeedbackReceiverId = guid;
             var response = await _feedbacksService.GetFeedbacksAsync(feedbacksListFilters);
