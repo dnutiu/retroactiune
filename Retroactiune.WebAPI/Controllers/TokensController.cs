@@ -178,7 +178,7 @@ namespace Retroactiune.Controllers
                 _logger.LogWarning("Invalid token {Guid}", guid);
                 return Ok(new CheckTokenDto
                 {
-                    IsValid = true
+                    IsValid = false
                 });
             }
         }
