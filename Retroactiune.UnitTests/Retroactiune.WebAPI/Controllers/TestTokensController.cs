@@ -172,5 +172,47 @@ namespace Retroactiune.Tests.Retroactiune.WebAPI.Controllers
             Assert.IsType<BadRequestObjectResult>(result);
             tokens.Verify(i => i.FindAsync(It.IsAny<TokenListFilters>()), Times.Once);
         }
+
+        [Fact]
+        public async Task Test_CheckToken_NotFound()
+        {
+            // Arrange
+            var mapper = TestUtils.GetMapper();
+            var feedbackService = new Mock<IFeedbackReceiversService>();
+            var tokens = new Mock<ITokensService>();
+            var logger = new Mock<ILogger<TokensController>>();
+            tokens.Setup(i => i.FindAsync(It.IsAny<TokenListFilters>()))
+                .ReturnsAsync(new List<Token>());
+            
+            // Test
+            var controller = new TokensController(feedbackService.Object, tokens.Object, logger.Object, mapper);
+            var result = await controller.CheckToken("random");
+            
+            // Assert
+            var checkResult = (CheckTokenDto) ((ObjectResult) result).Value;
+            Assert.IsType<OkObjectResult>(result);
+            Assert.False(checkResult.IsValid);
+        }
+        
+        [Fact]
+        public async Task Test_CheckToken_Valid()
+        {
+            // Arrange
+            var mapper = TestUtils.GetMapper();
+            var feedbackService = new Mock<IFeedbackReceiversService>();
+            var tokens = new Mock<ITokensService>();
+            var logger = new Mock<ILogger<TokensController>>();
+            tokens.Setup(i => i.FindAsync(It.IsAny<TokenListFilters>()))
+                .ReturnsAsync(new List<Token> { new Token() });
+            
+            // Test
+            var controller = new TokensController(feedbackService.Object, tokens.Object, logger.Object, mapper);
+            var result = await controller.CheckToken("random");
+            
+            // Assert
+            var checkResult = (CheckTokenDto) ((ObjectResult) result).Value;
+            Assert.IsType<OkObjectResult>(result);
+            Assert.True(checkResult.IsValid);
+        }
     }
 }

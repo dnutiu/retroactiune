@@ -160,13 +160,12 @@ namespace Retroactiune.Controllers
             string guid
         )
         {
-            // TODO: Unit test.
-            var response = await _tokensService.FindAsync(new TokenListFilters
-            {
-                Ids = new[] {guid}
-            });
             try
             {
+                var response = await _tokensService.FindAsync(new TokenListFilters
+                {
+                    Ids = new[] {guid}
+                });
                 var token = response.ElementAt(0);
                 return Ok(new CheckTokenDto
                 {
@@ -180,7 +179,7 @@ namespace Retroactiune.Controllers
                 {
                     IsValid = false
                 });
-            }
+            } 
         }
     }
 }
