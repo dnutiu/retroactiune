@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Retroactiune.Core.Entities;
@@ -77,9 +78,11 @@ namespace Retroactiune.Controllers
         /// <response code="200">The feedback has been added.</response>
         /// <response code="400">The request is invalid.</response>  
         /// <returns></returns>
+        [Authorize]
         [HttpGet("{guid}/feedbacks")]
         [ProducesResponseType(typeof(NoContentResult), StatusCodes.Status204NoContent)]
         [ProducesResponseType(typeof(BasicResponse), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType( StatusCodes.Status401Unauthorized)]
         public async Task<IActionResult> GetFeedbacks(string guid, [FromQuery] ListFeedbacksFiltersDto filters)
         {
             var feedbacksListFilters = _mapper.Map<FeedbacksListFilters>(filters);

@@ -42,7 +42,12 @@ namespace Retroactiune
                 var settings = i.GetService<IOptions<DatabaseSettings>>();
                 return new MongoClient(settings.Value.ConnectionString);
             });
-            
+
+            services.AddAuthentication(options =>
+            {
+                options.DefaultAuthenticateScheme = "Bearer";
+            }).AddScheme<TestAuthenticationOptions, TestTokenAuthenticationHandler> ("Bearer", o => { });
+
             // WebAPI
             services.AddControllers();
         }
@@ -52,6 +57,7 @@ namespace Retroactiune
         {
             app.UseHttpsRedirection();
             app.UseRouting();
+            app.UseAuthentication();
             app.UseAuthorization();
             app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
         }

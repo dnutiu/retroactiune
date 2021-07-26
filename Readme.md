@@ -1,6 +1,6 @@
 # Introduction
 
-![Under Development](https://img.shields.io/badge/status-Under%20Development-orange) ![Build Status](https://circleci.com/gh/dnutiu/retroactiune.svg?style=svg)  
+![Build Status](https://circleci.com/gh/dnutiu/retroactiune.svg?style=svg)  
 ![GitHub commit activity](https://img.shields.io/github/commit-activity/m/dnutiu/retroactiune) ![GitHub repo size](https://img.shields.io/github/repo-size/dnutiu/retroactiune) ![GitHub top language](https://img.shields.io/github/languages/top/dnutiu/retroactiune)
 
 ![Swagger API](./docs/retroactiune_swagger.png)
@@ -31,6 +31,17 @@ The application code is organized using the [Clean Architecture](https://docs.mi
 
 ![Example deployment architecture](./docs/app_architecture_layers.png)
 
+## Authorization Provider
+
+An external Authorization provider is required in order to run the API, the provider needs to support
+Bearer tokens and HS256 key signing algorithm. _RS256 is currently not supported._
+
+I recommend that you start with [Auth0](https://auth0.com/) and their free tier.
+
+See the following resources:
+- https://auth0.com/docs/get-started/set-up-apis
+- https://developers.redhat.com/blog/2020/01/29/api-login-and-jwt-token-generation-using-keycloak#set_up_a_client
+
 ## Developing
 
 To install the dependencies run `dotnet restore`.
@@ -49,3 +60,5 @@ _Note: [Docker](https://www.docker.com/) and [Docker-Compose](https://docs.docke
 docker-compose up -d
 dotnet test
 ```
+
+The projects has ~96% code coverage.

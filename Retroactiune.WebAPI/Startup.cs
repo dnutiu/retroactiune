@@ -1,6 +1,8 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
+using System.Text;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -8,6 +10,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
 using MongoDB.Driver;
 using Prometheus;
 using Retroactiune.Core.Interfaces;
@@ -20,8 +24,6 @@ namespace Retroactiune
     [ExcludeFromCodeCoverage]
     public class Startup
     {
-        // TODO: External auth provider.
-        // TODO: Improve coverage.
         // TODO: UI? 
         public Startup(IConfiguration configuration)
         {
@@ -52,12 +54,51 @@ namespace Retroactiune
                 return new MongoClient(settings.Value.ConnectionString);
             });
 
+            services.AddAuthentication(options =>
+            {
+                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            }).AddJwtBearer(options =>
+            {
+                options.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidIssuer = Configuration.GetSection("AuthorizationProvider:Domain").Value,
+                    ValidAudience = Configuration.GetSection("AuthorizationProvider:Audience").Value,
+                    IssuerSigningKey = new SymmetricSecurityKey(
+                        Encoding.UTF8.GetBytes(Configuration.GetSection("AuthorizationProvider:SymmetricSecurityKey")
+                            .Value))
+                };
+            });
+
             // WebAPI
             services.AddControllers();
             services.AddSwaggerGen(c =>
             {
                 var filePath = Path.Combine(AppContext.BaseDirectory, "Retroactiune.WebAPI.xml");
                 c.IncludeXmlComments(filePath);
+                c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+                {
+                    Type = SecuritySchemeType.Http,
+                    BearerFormat = "JWT",
+                    In = ParameterLocation.Header,
+                    Scheme = "bearer",
+                    Description = "Please insert JWT token into field"
+                });
+
+                c.AddSecurityRequirement(new OpenApiSecurityRequirement
+                {
+                    {
+                        new OpenApiSecurityScheme
+                        {
+                            Reference = new OpenApiReference
+                            {
+                                Type = ReferenceType.SecurityScheme,
+                                Id = "Bearer"
+                            }
+                        },
+                        new string[] { }
+                    }
+                });
             });
         }
 
@@ -70,7 +111,7 @@ namespace Retroactiune
             }
 
             app.UseMetricServer();
-            
+
             app.UseSwagger();
             app.UseSwaggerUI(c =>
             {
@@ -79,14 +120,14 @@ namespace Retroactiune
             });
 
             app.UseHttpsRedirection();
-            
+
             app.UseSentryTracing();
             app.UseRouting();
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
-
             logger.LogInformation("Running");
         }
     }

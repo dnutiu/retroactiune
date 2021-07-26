@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -39,8 +40,10 @@ namespace Retroactiune.Controllers
         /// <response code="200">A list of tokens.</response>
         /// <response code="400">The request is invalid.</response>  
         [HttpGet]
+        [Authorize]
         [ProducesResponseType(typeof(IEnumerable<Token>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType( StatusCodes.Status401Unauthorized)]
         public async Task<IActionResult> ListTokens([FromQuery] ListTokensFiltersDto filtersDto)
         {
             try
@@ -68,8 +71,10 @@ namespace Retroactiune.Controllers
         /// <response code="200">Returns ok.</response>
         /// <response code="400">If the items is invalid</response>  
         [HttpPost]
+        [Authorize]
         [ProducesResponseType(typeof(BasicResponse), StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType( StatusCodes.Status401Unauthorized)]
         public async Task<IActionResult> GenerateTokens([Required] GenerateTokensDto generateTokensDto)
         {
             var feedbackReceiverId = generateTokensDto.FeedbackReceiverId;
@@ -99,8 +104,10 @@ namespace Retroactiune.Controllers
         /// <response code="404">The request is invalid.</response>  
         /// <returns></returns>
         [HttpDelete]
+        [Authorize]
         [ProducesResponseType(typeof(NoContentResult), StatusCodes.Status204NoContent)]
         [ProducesResponseType(typeof(BasicResponse), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType( StatusCodes.Status401Unauthorized)]
         public async Task<IActionResult> DeleteTokens([Required] IEnumerable<string> tokenIds)
         {
             try
@@ -124,10 +131,12 @@ namespace Retroactiune.Controllers
         /// <param name="guid">The guid of the item to be deleted.</param>
         /// <returns>A NoContent result.</returns>
         /// <response code="204">The delete is submitted.</response>
-        /// <response code="400">The request is invalid.</response>  
+        /// <response code="400">The request is invalid.</response>
+        [Authorize]
         [HttpDelete("{guid}")]
         [ProducesResponseType(typeof(NoContentResult), StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType( StatusCodes.Status401Unauthorized)]
         public async Task<IActionResult> DeleteToken(
             [StringLength(24, ErrorMessage = "invalid guid, must be 24 characters", MinimumLength = 24)]
             string guid)

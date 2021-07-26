@@ -3,6 +3,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -46,10 +47,12 @@ namespace Retroactiune.Controllers
         /// <param name="items">The list of FeedbackReceivers</param>
         /// <returns>A BasicResponse indicating success.</returns>
         /// <response code="200">Returns an ok message.</response>
-        /// <response code="400">If the items is invalid</response>  
+        /// <response code="400">If the items is invalid</response>
+        [Authorize]
         [HttpPost]
         [ProducesResponseType(typeof(BasicResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType( StatusCodes.Status401Unauthorized)]
         public async Task<IActionResult> Post([Required] IEnumerable<FeedbackReceiverInDto> items)
         {
             var feedbackReceiversDto = items.ToList();
@@ -77,9 +80,11 @@ namespace Retroactiune.Controllers
         /// <returns>A NoContent result.</returns>
         /// <response code="204">The delete is submitted.</response>
         /// <response code="400">The request is invalid.</response>  
+        [Authorize]
         [HttpDelete("{guid}")]
         [ProducesResponseType(typeof(NoContentResult), StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType( StatusCodes.Status401Unauthorized)]
         public async Task<NoContentResult> Delete(
             [StringLength(24, ErrorMessage = "invalid guid, must be 24 characters", MinimumLength = 24)]
             string guid)
@@ -96,11 +101,13 @@ namespace Retroactiune.Controllers
         /// <returns>A Ok result with a <see cref="FeedbackReceiverOutDto"/>.</returns>
         /// <response code="200">The item returned successfully.</response>
         /// <response code="400">The request is invalid.</response>  
-        /// <response code="404">The item was not found.</response>  
+        /// <response code="404">The item was not found.</response>
+        [Authorize]
         [HttpGet("{guid}")]
         [ProducesResponseType(typeof(FeedbackReceiverOutDto), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(BasicResponse), StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType( StatusCodes.Status401Unauthorized)]
         public async Task<IActionResult> Get(
             [StringLength(24, ErrorMessage = "invalid guid, must be 24 characters", MinimumLength = 24)]
             string guid)
@@ -126,10 +133,12 @@ namespace Retroactiune.Controllers
         /// <param name="limit">If set, it will limit the results to N items. Allowed range is 1-1000.</param>
         /// <returns>A Ok result with a list of <see cref="FeedbackReceiverOutDto"/>.</returns>
         /// <response code="200">The a list is returned.</response>
-        /// <response code="400">The request is invalid.</response>  
+        /// <response code="400">The request is invalid.</response>
         [HttpGet]
+        [Authorize]
         [ProducesResponseType(typeof(IEnumerable<FeedbackReceiverOutDto>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(BasicResponse), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType( StatusCodes.Status401Unauthorized)]
         public async Task<IActionResult> List([FromQuery] IEnumerable<string> filter,
             [RangeAttribute(1, int.MaxValue, ErrorMessage = "offset is  out of range, allowed ranges [1-IntMax]"),
              FromQuery]
@@ -148,8 +157,10 @@ namespace Retroactiune.Controllers
         /// <response code="400">The request is invalid.</response>  
         /// <returns></returns>
         [HttpDelete]
+        [Authorize]
         [ProducesResponseType(typeof(NoContentResult), StatusCodes.Status204NoContent)]
         [ProducesResponseType(typeof(BasicResponse), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType( StatusCodes.Status401Unauthorized)]
         public async Task<IActionResult> DeleteMany([Required] IEnumerable<string> ids)
         {
             try
