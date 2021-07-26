@@ -24,7 +24,6 @@ namespace Retroactiune
     [ExcludeFromCodeCoverage]
     public class Startup
     {
-        // TODO: UI? 
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
